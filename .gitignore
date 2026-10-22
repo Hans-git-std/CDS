@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C / C++ / Rust Build outputs
+target/
+*.o
+*.obj
+*.dll
+*.so
+*.dylib
+*.exe
+
+# Environments & Dependencies
+.venv/
+env/
+venv/
+ENV/
+.uv/
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary & Lock files
+~$*.docx
+*.tmp
+*.log
+
+# Large Datasets and Pretrained Model Weights
+*.onnx
+*.pt
+*.bin
+*.safetensors
+*.tar.gz
+data/raw/
+replays/

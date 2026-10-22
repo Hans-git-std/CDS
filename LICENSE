@@ -1,0 +1,57 @@
+PROPRIETARY AND CONFIDENTIAL SOURCE-AVAILABLE EVALUATION LICENSE
+Version 1.0 (October 2026)
+
+Copyright (c) 2026 The CDS Project Contributors & Project Owner.
+All rights reserved.
+
+================================================================================
+IMPORTANT NOTICE: PLEASE READ CAREFULLY BEFORE ACCESSING OR VIEWING THIS CODEBASE.
+================================================================================
+
+This software, its source code, documentation, algorithms, architecture specifications,
+and associated media ("the Materials") are the exclusive proprietary property of the
+Copyright Holder. Access to the Materials is granted strictly under the following
+terms and conditions:
+
+1. PERMITTED USE (VIEW-ONLY LICENSE):
+   - You are granted a limited, personal, revocable, non-exclusive, non-transferable,
+     royalty-free right to VIEW, READ, and INSPECT the Materials solely for educational,
+     reference, and evaluation purposes.
+   - You may run the documentation generation tools locally solely to view the documentation
+     for personal evaluation.
+
+2. EXPRESS RESTRICTIONS & PROHIBITIONS:
+   Except as expressly authorized in Section 1, you shall NOT, directly or indirectly:
+   - COPY, reproduce, duplicate, mirror, or republish the Materials or any portion thereof.
+   - FORK or host this repository publicly or privately on GitHub, GitLab, Bitbucket,
+     or any other code hosting, version control, or public network service without prior
+     written authorization.
+   - MODIFY, adapt, translate, enhance, alter, or create derivative works of any part
+     of the Materials.
+   - REDISTRIBUTE, share, broadcast, sell, rent, lease, sublicense, syndicate, or transfer
+     the Materials to any third party.
+   - USE, incorporate, link, or deploy the Materials (in whole or in part) in any commercial,
+     proprietary, production, or open-source software, game engine, or anti-cheat system.
+   - REVERSE ENGINEER, decompile, disassemble, or attempt to derive source code, underlying
+     models, or mathematical formulations beyond what is visible in the raw source files.
+
+3. INTELLECTUAL PROPERTY & OWNERSHIP:
+   No title, ownership, copyright, patent right, trademark, or intellectual property right
+   in or to the Materials is transferred to you. All rights not expressly granted herein
+   are strictly reserved by the Copyright Holder.
+
+4. TERMINATION:
+   This license terminates automatically without notice if you fail to comply with any of
+   the terms and conditions specified herein. Upon termination, you must immediately destroy
+   all downloaded, cached, or local copies of the Materials in your possession.
+
+5. DISCLAIMER OF WARRANTY:
+   THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+   PURPOSE, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+   BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OR INABILITY
+   TO USE THE MATERIALS.
+
+================================================================================
+FOR INQUIRIES, COMMERCIAL LICENSING, OR PERMISSION REQUESTS, CONTACT THE PROJECT OWNER.
+================================================================================
