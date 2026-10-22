@@ -2,171 +2,201 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/System-Cheat_Detection_System_(CDS)-0F2942?style=for-the-badge&logo=shield&logoColor=white" alt="CDS System" />
-  <img src="https://img.shields.io/badge/Architecture-3--Tier_Multi--Modal-0284C7?style=for-the-badge" alt="3-Tier Multi-Modal" />
-  <img src="https://img.shields.io/badge/Status-Active_Architecture-10B981?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Roadmap-Phase_1_(Core)_%2B_Phase_2_(Battleground)-0284C7?style=for-the-badge" alt="Roadmap" />
+  <img src="https://img.shields.io/badge/Status-Active_Development-10B981?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/License-Proprietary_(View--Only)-E11D48?style=for-the-badge" alt="License" />
 </p>
 
 <p align="center">
-  <strong>Next-Generation Behavioral & Agentic Anti-Cheat Engine for Competitive Gaming</strong><br>
-  <em>Detecting modern DMA hardware cheats, computer vision aimbots, and stealth injections via kinematics, NLP, and multi-agent consensus.</em>
+  <strong>Next-Generation Behavioral & Multi-Modal Anti-Cheat Engine for Competitive Online Games</strong><br>
+  <em>Designed for Modern Battleground titles (e.g. PUBG, Warzone, Apex, Free Fire) using Passive NLP, Active Telemetry Anomaly, and Agentic Profile Intelligence.</em>
 </p>
 
 ---
 
 ## 📑 Table of Contents
 
-- [The Core Challenge](#-the-core-challenge)
-- [System Overview](#-system-overview)
-- [The Three-Tier Architecture](#-the-three-tier-architecture)
-  - [Layer 1: Passive Detector (NLP Method)](#1-passive-detector-nlp-method)
-  - [Layer 2: Active Detector (Kinematic Anomaly Method)](#2-active-detector-kinematic-anomaly-method)
-  - [Layer 3: External Verification (Agentic Multi-Perspective Method)](#3-external-verification-agentic-method)
-- [End-to-End System Flowchart](#-end-to-end-system-flowchart)
-- [Decision & Quarantine Matrix](#-decision--quarantine-matrix)
-- [Key Innovations & Critique](#-key-innovations--critique)
-- [Project Layout](#-project-layout)
-- [Generated Specifications](#-generated-specifications)
+- [Strategic Product Roadmap](#-strategic-product-roadmap)
+- [How CDS Works: The 4 Internal Processing Stages](#-how-cds-works-the-4-internal-processing-stages)
+  - [Stage 1: Passive Detector (NLP on Game Database)](#stage-1-passive-detector-nlp-method-on-game-db)
+  - [Stage 2: Active Detector (Real-Time In-Game Anomaly)](#stage-2-active-detector-real-time-anomaly)
+  - [Stage 3: External Verification (Agentic Profile Inspector)](#stage-3-agentic-profile-inspector-seller-intelligence)
+  - [Stage 4: Pipeline Orchestrator & Consensus Engine](#stage-4-central-pipeline-orchestrator--consensus-engine)
+- [Developer Onboarding & Workflow](#-developer-onboarding--integration-workflow)
+- [End-to-End Architecture Diagram](#-end-to-end-architecture-diagram)
+- [The Consensus & Promotion Rules](#-the-consensus--promotion-rules)
+- [Developer Responsibility & Enforcement Handover](#-developer-responsibility--enforcement-handover)
+- [Repository Structure](#-repository-structure)
+- [Running the Simulation](#-running-the-simulation)
 - [License & Restrictions](#-license--restrictions)
 
 ---
 
-## ⚡ The Core Challenge
+## 🗺️ Strategic Product Roadmap
 
-Modern cheating has rendered conventional client-side, signature-based anti-cheat systems obsolete:
-
-* **DMA (Direct Memory Access) Hardware Cards:** PCIe-level FPGA cards physically read memory from an isolated second PC, completely evading OS kernel hooks.
-* **Computer Vision Aimbots:** Off-box HDMI capture cards process frames using real-time YOLO/TensorRT models and inject hardware-level HID mouse inputs without touching game binaries.
-* **Humanized Micro-Smoothing:** Modern hacks emulate organic hand jitter, non-linear Bezier curves, and variable reaction times to fool primitive threshold filters.
-
-> **CDS Core Philosophy:**  
-> Rather than fighting an unending battle inside the compromised operating system kernel, **CDS shifts the defensive perimeter to behavioral game analytics, biomechanical telemetry, and multi-agent AI verification.**
+CDS is developed across two distinct macro stages:
+1. **Stage 1 (Core Analogy & Engine — *Current Development*):**  
+   The mathematical models, feature scaling pipelines, NLP tokenization engine, and multi-model consensus logic.
+2. **Stage 2 (Production Battleground Implementation — *Next Step*):**  
+   Targeted integration and deployment reference for **modern online Battleground games** (e.g., 100-player Battle Royale matches with parachuting, terrain elevation, vehicular movement, and long-range ballistic gunplay).
 
 ---
 
-## 🎯 System Overview
+## ⚙️ How CDS Works: The 4 Internal Processing Stages
 
-**CDS (Cheat Detection System)** is a server-side and cloud-native anti-cheat engine that inspects player performance, mechanical input kinematics, and reporting linguistics across time:
+When integrated into a game, CDS runs four coordinated stages:
 
 ```
-+-------------------------------------------------------------------------------+
-|                             CDS MULTI-TIER ENGINE                            |
-+------------------------+-----------------------------+------------------------+
-|   Layer 1: PASSIVE     |      Layer 2: ACTIVE        |   Layer 3: AGENTIC     |
-|   NLP & Behavioral     |     Real-Time Kinematics    |   Multi-Perspective    |
-|   • Report linguistics |     • Minimum Jerk checks   |   • Physics sandbox    |
-|   • Perplexity models  |     • Reaction time bounds  |   • Occlusion audit    |
-|   • Chat intent mining |     • Crosshair correlation |   • Arbiter consensus  |
-+------------------------+-----------------------------+------------------------+
++--------------------------------------------------------------------------------------------------+
+|                                    CDS 4-STAGE SYSTEM PIPELINE                                   |
++--------------------------+--------------------------+--------------------------------------------+
+| STAGE 1: PASSIVE NLP     | STAGE 2: ACTIVE ANOMALY  | STAGE 3: AGENTIC PROFILE                   |
+| (Game DB Historical)     | (Live In-Match Stream)   | (Cheat Seller Intelligence)                |
+| • Win rate, K/D ratio    | • Movement speed, Height | • Profile Bio, Nickname, Clan tag          |
+| • Headshot %, DPM        | • Live DPM, In-game K/D  | • Detects Telegram / Discord seller links  |
+| • Training Mode (Ans Key)| • Micro aim-snap checks  | • Outputs: GREEN / GRAY only               |
+| • Outputs: GRN/GRY/RED   | • Outputs: GRAY / RED    |   (Profiles alone cannot be definitely RED)|
++--------------------------+--------------------------+--------------------------------------------+
+                                          |
+                                          v
++--------------------------------------------------------------------------------------------------+
+|                      STAGE 4: CENTRAL PIPELINE ORCHESTRATOR & CONSENSUS ENGINE                   |
+| • Runs all 3 models simultaneously and balances compute resources.                               |
+| • Collects and cross-routes the GRAY list across models.                                         |
+| • 3-GRAY Promotion Rule: Flagged as GRAY in ALL 3 models  ===> Promoted to RED!                  |
+| • 2-GRAY Retention Rule: Flagged as GRAY in only 1 or 2   ===> Kept in GRAY for monitoring.      |
++--------------------------------------------------------------------------------------------------+
+                                          |
+                                          v
+                      [ Final GREEN / GRAY / RED Rosters Dispatched to Dev ]
 ```
 
+### Stage 1: Passive Detector (NLP Method on Game DB)
+* **Data Source:** Connects directly to the historical Game Database.
+* **Feature Scaling:** Preprocesses and scales historical Battleground metrics: **Win Rate, K/D Ratio, Total Matches/Kills, Headshot Rate, Damage Per Match (DPM), and Account Age**.
+* **NLP Representation:** Encodes normalized numerical features into structured semantic tokens, allowing language classification heads to detect unnatural stat combinations.
+* **First-Time Cold-Start / Training Mode:**  
+  When initializing the repository for the first time, the game developer runs Stage 1 in **Training Mode** providing a ground-truth **Answer Key** containing only **GREEN** (known clean players) and **RED** (confirmed banned cheaters). In ground-truth training, there is no mid-tier GRAY—this teaches the NLP model where legitimate performance ends and hacking begins, allowing it to accurately flag suspicious intermediate **GRAY** players during live inference.
+* **Output:** Returns three rosters: `GREEN`, `GRAY`, and `RED`.
+
+### Stage 2: Active Detector (Real-Time Anomaly)
+* **Data Source:** Dedicated game server real-time telemetry stream.
+* **Metrics:** Live match state:
+  * `movement_speed`: Detects speed-hack multipliers.
+  * `player_height`: Detects fly-hacks and vertical teleportation.
+  * `damage_per_minute (DPM)`: Real-time damage bursts.
+  * `active_kd` & `active_headshot_rate`: Unnatural single-match killing sprees.
+  * `micro_aim_delta`: Algorithmic snaps and inhuman aim micro-adjustments.
+* **Filtering:** Automatically discards clean players (`GREEN`) to conserve CPU tick time, and alerts only on `GRAY` (suspicious) and `RED` (blatant physical impossibilities).
+* **Operation:** Runs independently from Stage 1.
+
+### Stage 3: Agentic Profile Inspector (Seller Intelligence)
+* **The Insight:** High-tier cheat distributors often use their in-game player ID, nickname, clan tag, and bio status to advertise and sell their cheat scripts, private configs, and software (e.g. `"DM for undetected VIP hack DC: seller#123"`, `"Tele: t.me/ez_win_cheats"`).
+* **Mechanism:** Pulls profile data from the database and runs an LLM agentic classifier to detect commercial contact handles and cheat seller language.
+* **Safety Boundary:** A player's bio text alone **cannot definitively prove active in-game cheating**. Therefore, Stage 3 outputs **ONLY GREEN or GRAY** (never RED).
+
+### Stage 4: Central Pipeline Orchestrator & Consensus Engine
+* Coordinates and balances all models simultaneously.
+* Manages data pipelines and aggregates lists.
+* Implements the **Cross-Model GRAY Routing**:
+  * Puts the GRAY list from one model into the context of the other two models.
+  * **The 3-GRAY Promotion Rule:** If a player is flagged as **GRAY across ALL 3 models** (Stage 1, Stage 2, and Stage 3), Stage 4 **promotes them to RED**!
+  * **The 2-GRAY Retention Rule:** If a player is flagged as **GRAY in only 1 or 2 models**, they **remain in GRAY** (retained for high-tick monitoring).
+  * Direct REDs from Stage 1 or Stage 2 remain **RED**.
+
 ---
 
-## 🔬 The Three-Tier Architecture
+## 👩‍💻 Developer Onboarding & Integration Workflow
 
-### 1. Passive Detector (NLP Method)
-The **Passive Detector** operates asynchronously in the background, analyzing unstructured communication streams and event sequences:
-* **Report Credibility Analysis:** Uses fine-tuned NLP transformers to evaluate in-game reports. It separates emotional "salt" reports from forensic observations and weights submissions according to reporter credibility.
-* **Chat Intent & Burner Account Detection:** Identifies chat patterns associated with throwaway accounts, admissions ("toggled on"), or advertisements for private injection tools.
-* **Game Action Language Modeling:** Treats sequences of game actions as tokens (`AIM_SNAP -> FIRE -> HEADSHOT -> INSTANT_RELOAD`). An autoregressive sequence model calculates sequence perplexity; statistically improbable gameplay rhythms raise passive suspicion flags.
-
-### 2. Active Detector (Kinematic Anomaly Method)
-The **Active Detector** monitors real-time player telemetry at game tick rates (64Hz–128Hz), comparing input dynamics against biological human limits:
-* **Minimum Jerk Trajectory Validation:** Biological motor control obeys Flash & Hogan’s *Minimum Jerk Principle*. Human flick shots have continuous, bell-shaped acceleration and deceleration curves. Aimbots exhibit discontinuous third-order derivatives ($\frac{d^3\theta}{dt^3}$), unnatural velocity step-functions, or algorithmic dampening.
-* **Visual Reaction & Latency Envelopes:** Tracks the millisecond delay between target visibility (clearing occlusion culling) and angular reticle movement. Consistent sub-120ms reaction times across smoke or walls indicate radar or wallhack usage.
-* **Crosshair-to-Target Mutual Information:** Quantifies spatial tracking through solid geometry. Even cheaters actively attempting to "act natural" exhibit statistically anomalous crosshair tracking of hidden targets.
-
-### 3. External Verification (Agentic Method)
-When Layers 1 or 2 detect elevated anomaly scores, the incident match replay is extracted and handed to an **Autonomous Multi-Agent AI Review Panel**:
-* **Kinematics Inspector Agent:** Replays raw input deltas in a virtual physics sandbox to identify synthetic hardware jitter or packet injection flags.
-* **Spatial & Sensory Context Agent:** Verifies whether the player had legitimate situational clues (audio footsteps, teammate callouts, radar pings, bullet tracers) that justify suspicious crosshair pre-placement.
-* **Arbiter Agent (Consensus Engine):** Synthesizes reports from all agents, calculates a calibrated **Confidence Score (0%–100%)**, compiles an explainable natural-language dossier, and triggers automated enforcement or human moderation escalations.
-
----
-
-## 🔄 End-to-End System Flowchart
+Game developers integrate CDS into their production infrastructure through a simple 5-step process detailed in [**`battleground-implementation.md`**](battleground-implementation.md):
 
 ```mermaid
 flowchart TD
-    subgraph INGESTION["1. Telemetry Ingestion"]
-        P1["Player Input (Mouse, Keys, Ticks)"] --> GS["Game Server Stream"]
-        P2["Player Reports & In-game Chat"] --> CS["Chat & Report Stream"]
-    end
-
-    subgraph DETECTION["2. Analytical Detection Layers"]
-        CS --> L1["Layer 1: Passive NLP Detector<br/>(Report semantics & Action Perplexity)"]
-        GS --> L2["Layer 2: Active Kinematic Detector<br/>(Minimum Jerk & Reaction Bounds)"]
-    end
-
-    subgraph AGGREGATION["3. Scoring & Fusion"]
-        L1 --> FUSION["Anomaly Scoring Engine"]
-        L2 --> FUSION
-    end
-
-    subgraph VERIFICATION["4. Layer 3: Agentic Verification"]
-        FUSION -->|Score > 0.70| AGENT["Multi-Agent Review Panel"]
-        AGENT --> AG1["Kinematics Agent"]
-        AGENT --> AG2["Spatial & Sound Agent"]
-        AGENT --> ARB["Verdict Arbiter Agent"]
-        AG1 --> ARB
-        AG2 --> ARB
-    end
-
-    subgraph ENFORCEMENT["5. Enforcement & Escalation"]
-        ARB -->|Confidence >= 90%| BAN["Automated Quarantine / Ban"]
-        ARB -->|Confidence 75-89%| REVIEW["Human Moderator Dossier"]
-        ARB -->|Confidence < 75%| WATCH["High-Frequency Watchlist"]
-    end
+    DEV["1. Developer forks repo & reads battleground-implementation.md"] --> S1_INIT["2. Stage 1 Init: Attach Game DB & Run Training Mode with Answer Key"]
+    S1_INIT --> S2_INIT["3. Stage 2 Init: Connect Real-Time Match Server Telemetry"]
+    S2_INIT --> S3_INIT["4. Stage 3 Init: Connect User Profile & Bio Metadata"]
+    S3_INIT --> S4_RUN["5. Stage 4 Orchestrator: Run All Models Simultaneously"]
+    S4_RUN --> ROSTERS["Output: GREEN, GRAY, and RED Rosters"]
+    ROSTERS --> HANDOVER["Developer Handover: Free / Monitor / Ban"]
 ```
 
 ---
 
-## ⚖️ Decision & Quarantine Matrix
+## ⚖️ The Consensus & Promotion Rules
 
-| Confidence Tier | Risk Level | Primary Indicators | Automated Action | Escalation Path |
-| :--- | :--- | :--- | :--- | :--- |
-| **0% – 49%** | Nominal | Normal human variance & natural bell-curve jerk | None | Archived for baseline training |
-| **50% – 74%** | Elevated | Occasional sub-120ms reactions or high report volume | Increase server telemetry tickrate to 128Hz | Background watch-list |
-| **75% – 89%** | High Anomaly | Repeated angular jerk anomalies & spatial occlusion correlation | Silent shadow-matchmaking (cheater pool) | Dispatched to human review with replay clips |
-| **90% – 100%** | Definite Cheat | Discontinuous jerk, sub-80ms reaction, agentic consensus confirmation | Immediate match neutralization & hardware/account ban | Automated audit log with 99.99% certainty proof |
-
----
-
-## 💡 Key Innovations & Critique
-
-For complete architectural analysis and improvements, see [`docs/ANALYSIS_AND_IMPROVEMENTS.md`](docs/ANALYSIS_AND_IMPROVEMENTS.md). Key enhancements included in this design:
-
-1. **Smurf vs. Cheat Disambiguation:** Differentiates high-skill legitimate players from aimbotters by identifying physiological human imperfections (micro-saccades, overshoots) absent in algorithmic smoothers.
-2. **GDPR/CCPA Chat Privacy Shield:** NLP analysis runs on client-side pseudonymized token embeddings to prevent storage of Personally Identifiable Information (PII).
-3. **Adversarial Hardening:** Incorporates adversarial training loops simulating synthetic neural aimbots to keep detectors ahead of commercial cheat vendors.
-4. **Decoupled Three-Tier Latency Budget:** In-server physics checks (<1ms), streaming anomaly detection (10-50ms), and agentic replay review (asynchronous 5-30s).
+| Stage 1 (Passive DB) | Stage 2 (Active Telemetry) | Stage 3 (Profile Bio) | Final Consensus Tier | System Action & Explanation |
+| :---: | :---: | :---: | :---: | :--- |
+| **RED** | *Any* | *Any* | 🟥 **RED** | **Direct Red Flag:** Flagged by historical DB analysis. |
+| *Any* | **RED** | *Any* | 🟥 **RED** | **Direct Red Flag:** Blatant physical speed/aim/height violation in live match. |
+| **GRAY** | **GRAY** | **GRAY** | 🟥 **RED** | **3-Gray Promotion:** Suspicious across all 3 independent vectors. Promoted to RED! |
+| **GRAY** | **GRAY** | **GREEN** | 🟨 **GRAY** | **2-Gray Retention:** 2 flags present. Retained in high-priority monitor queue. |
+| **GRAY** | **GREEN** | **GRAY** | 🟨 **GRAY** | **2-Gray Retention:** Retained in monitor queue. |
+| **GREEN** | **GRAY** | **GREEN** | 🟨 **GRAY** | **1-Gray Retention:** Single anomaly spike. Retained in soft-watch list. |
+| **GREEN** | **GREEN** | **GREEN** | 🟩 **GREEN** | **Nominal Baseline:** Verified clean player. |
 
 ---
 
-## 📂 Project Layout
+## 🛡️ Developer Responsibility & Enforcement Handover
+
+CDS establishes a clear, professional boundary between **threat classification** and **studio policy enforcement**:
+
+```
++------------------------------------+          +------------------------------------+
+|             CDS ENGINE             |          |       DEVELOPER GAME BACKEND       |
+|                                    |          |                                    |
+| [ GREEN ] ---> Verified Clean      |  =====>  | Action: FREE (Normal Matchmaking)  |
+| [ GRAY  ] ---> Suspicious / Border |  =====>  | Action: MONITOR (High-Tick Watch)  |
+| [ RED   ] ---> Confirmed Cheater   |  =====>  | Action: BAN / SHADOW-LOBBY         |
++------------------------------------+          +------------------------------------+
+       ^ Analytical Responsibility                     ^ Enforcement Responsibility
+```
+
+* **GREEN List:** The developer frees the player to continue standard matchmaking.
+* **GRAY List:** The developer increases telemetry tick sampling (e.g. from 20Hz to 128Hz), saves full demo replays, or routes them to soft trust-factor queues.
+* **RED List:** The developer takes disciplinary action (instant match disconnect, HWID/account ban, damage nullification, or silent shadow-banning into cheater-only lobbies).
+* **Disclaimer:** CDS holds no liability or responsibility for game studio moderation decisions after delivering the classified rosters.
+
+---
+
+## 📂 Repository Structure
 
 ```
 CDS/
-├── README.md                                  # Designer project overview and documentation
+├── README.md                                  # Designer project overview (You are here)
+├── battleground-implementation.md             # Developer integration guide for Battleground games
 ├── LICENSE                                    # Proprietary View-Only Evaluation License
-├── PROMPT.md                                 # Original project initiation prompt
-├── Cheat Detection System (CDS).md            # Initial conceptual overview
 ├── Cheat_Detection_System_Specification.docx  # Full Microsoft Word engineering specification
 ├── generate_docs.py                          # Docx generation engine
+├── src/                                       # Working Python reference implementation
+│   ├── __init__.py                            # Package exports
+│   ├── stage1_passive_nlp.py                  # Stage 1: DB feature scaling & NLP model
+│   ├── stage2_active_anomaly.py               # Stage 2: Real-time telemetry anomaly detector
+│   ├── stage3_agentic_profile.py              # Stage 3: Profile & cheat-seller inspector
+│   ├── stage4_orchestrator.py                 # Stage 4: Orchestrator & 3-Gray consensus engine
+│   └── run_pipeline_example.py                # End-to-end runnable simulation
 ├── docs/
-│   ├── ARCHITECTURE.md                        # Technical subsystem and algorithmic architecture
+│   ├── ARCHITECTURE.md                        # Technical subsystem & mathematical formulations
 │   └── ANALYSIS_AND_IMPROVEMENTS.md           # Engineering analysis, gaps & recommendations
 └── .gitignore                                 # Git ignore configuration
 ```
 
 ---
 
-## 📄 Generated Specifications
+## 🧪 Running the Simulation
 
-* 📘 **Word Document Specification:** [`Cheat_Detection_System_Specification.docx`](Cheat_Detection_System_Specification.docx)  
-  *Contains the comprehensive 10-section engineering specification, executive summary, mathematical models, data schemas, and phased roadmap.*
-* 📑 **Architecture Deep-Dive:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-* 🔍 **Analysis & Recommendations:** [`docs/ANALYSIS_AND_IMPROVEMENTS.md`](docs/ANALYSIS_AND_IMPROVEMENTS.md)
+You can execute the complete 4-stage pipeline simulation locally:
+
+```powershell
+cd D:\Project\CDS\src
+uv run python run_pipeline_example.py
+```
+
+This simulates:
+1. First-time training mode calibration with ground truth answer key.
+2. Ingesting DB stats for Battleground players.
+3. Processing real-time speed, height, and aim telemetry.
+4. Inspecting profile bios for Discord/Telegram cheat seller patterns.
+5. Executing the 3-GRAY to RED promotion rule and producing the final developer dispatch.
 
 ---
 
@@ -174,8 +204,6 @@ CDS/
 
 **Copyright (c) 2026 The CDS Project. All rights reserved.**
 
-This repository is distributed under a strict **Proprietary & Confidential Source-Available View-Only License**.  
-* **Permitted:** Reading and viewing for educational, academic, and evaluation purposes.
-* **Prohibited:** Forking, copying, cloning for public distribution, modifying, selling, or using this codebase in commercial production without explicit prior written authorization.
-
-See the full terms in the [`LICENSE`](LICENSE) file.
+Distributed under a strict **Proprietary & Confidential Source-Available View-Only License**.  
+Viewing and evaluation permitted; copying, forking, redistribution, or unauthorized commercial use strictly prohibited.  
+See [`LICENSE`](LICENSE) for full details.
