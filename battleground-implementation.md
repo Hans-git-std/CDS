@@ -1,7 +1,7 @@
 # 🎮 Developer Guide: Integrating CDS into Your Game (`battleground-implementation.md`)
 
 Welcome to the **CDS (Cheat Detection System) Developer Implementation Guide**.  
-This tutorial is designed so that **any developer—even a beginner—can easily implement multi-stage cheat detection** into their game (such as modern multiplayer Battlegrounds, Battle Royale titles, or competitive shooters).
+This tutorial is structured so that **any developer—even a beginner—can easily implement multi-stage cheat detection** into their game (such as modern multiplayer Battlegrounds, Battle Royale titles, or competitive shooters).
 
 ---
 
@@ -10,13 +10,13 @@ This tutorial is designed so that **any developer—even a beginner—can easily
 > [!IMPORTANT]
 > **CDS is completely feature-agnostic.**  
 > We do **not** force or hardcode specific features into the models. As the game developer, **you decide which features to extract from your game database and live match servers**.  
-> CDS automatically adapts to whatever number of features (`input_dim`) you provide.
+> In all code examples and configuration files below, **all game-specific and customizable information is explicitly enclosed within `$$$ info $$$` markers**. Whenever you see `$$$ ... $$$`, substitute it with your own game data!
 
 ---
 
-## 🧠 What Types of Features Should You Use? (Guidance & Ideas)
+## 🧠 Feature Guidance (Ideas & Types of Features You Can Use)
 
-To help you get started, here is a guide on the types of features you can select for your game:
+To help you decide which features to select for your game, here are industry-standard examples:
 
 ### 1. Historical Database Features (For Stage 1: Passive NLP Detector)
 Extract cumulative historical stats per player from your user database:
@@ -26,7 +26,7 @@ Extract cumulative historical stats per player from your user database:
 * **Damage Output:** Average damage per match
 * **Account Lifetime:** Matches played or account age in days (detects burner accounts)
 
-> **💡 Best Practice:** Always scale/normalize your features to approximately $[0.0, 1.0]$ before passing them to the model (e.g. `kd_ratio / 20.0`).
+> **💡 Best Practice:** CDS includes a built-in `FeatureScaler` that automatically normalizes your raw metrics. You can pass raw unscaled numbers directly!
 
 ### 2. Live Match Telemetry Features (For Stage 2: Active Anomaly Detector)
 Stream high-frequency live match updates from your game server:
@@ -41,7 +41,7 @@ Stream high-frequency live match updates from your game server:
 ## 🚀 Step-by-Step Implementation
 
 ### Step 1: Install Dependencies
-CDS relies on **TensorFlow** and **NumPy**:
+CDS is powered by **TensorFlow** and **NumPy**:
 
 ```bash
 pip install tensorflow numpy
@@ -63,34 +63,38 @@ When initializing CDS for your game for the first time, you run in **Training Mo
 from cds import PassiveNLPDetector
 import numpy as np
 
-# 1. Initialize detector
-stage1 = PassiveNLPDetector()
+# 1. Initialize detector with automatic feature scaling
+stage1 = PassiveNLPDetector(auto_scale=True)
 
-# 2. Prepare your ground truth training data (Features chosen by YOU!)
-# In this example, the developer chose 4 features: [win_rate, kd, headshot_rate, dpm]
+# 2. Prepare your ground truth training data
+# $$$ [YOUR_CHOSEN_DATABASE_FEATURES: e.g. Win Rate, KD Ratio, Headshot %, DPM] $$$
 X_train = np.array([
     # Clean players (0 = GREEN)
-    [0.05, 0.08, 0.12, 0.15],
-    [0.08, 0.10, 0.15, 0.18],
-    [0.02, 0.05, 0.08, 0.10],
-    # Confirmed cheaters (1 = RED)
-    [0.92, 0.95, 0.90, 0.88],
-    [0.85, 0.88, 0.95, 0.91],
-    [0.89, 0.90, 0.88, 0.85],
+    $$$ [0.05, 0.08, 0.12, 0.15] $$$,
+    $$$ [0.08, 0.10, 0.15, 0.18] $$$,
+    $$$ [0.02, 0.05, 0.08, 0.10] $$$,
+    # Confirmed banned cheaters (1 = RED)
+    $$$ [0.92, 0.95, 0.90, 0.88] $$$,
+    $$$ [0.85, 0.88, 0.95, 0.91] $$$,
+    $$$ [0.89, 0.90, 0.88, 0.85] $$$,
 ], dtype=np.float32)
 
+# $$$ [YOUR_GROUND_TRUTH_ANSWER_KEY: 0=GREEN, 1=RED] $$$
 y_train = np.array([0, 0, 0, 1, 1, 1], dtype=np.float32)
 
 # 3. Train model with your answer key
-stage1.train(X_train, y_train, epochs=30)
+stage1.train(X_train, y_train, epochs=35)
 
 # 4. Run live classification on players from your DB
+# $$$ [ATTACH_YOUR_GAME_DATABASE_QUERY_RESULTS_HERE] $$$
 live_players_data = np.array([
-    [0.04, 0.06, 0.10, 0.12], # Clean player
-    [0.25, 0.28, 0.22, 0.20], # Borderline suspicious
+    $$$ [0.04, 0.06, 0.10, 0.12] $$$, # Clean player
+    $$$ [0.45, 0.48, 0.45, 0.42] $$$, # Borderline suspicious
 ], dtype=np.float32)
 
-results = stage1.classify(live_players_data, player_ids=["Player_101", "Player_102"])
+player_ids = $$$ ["Player_101", "Player_102"] $$$
+
+results = stage1.classify(live_players_data, player_ids=player_ids)
 # Returns:
 # results["rosters"]["GREEN"] -> List of clean player IDs
 # results["rosters"]["GRAY"]  -> List of suspicious player IDs
@@ -102,8 +106,8 @@ results = stage1.classify(live_players_data, player_ids=["Player_101", "Player_1
 ### Step 3: Stage 2 — Active Detector (TensorFlow Autoencoder)
 
 Stage 2 runs concurrently and independently during live matches to inspect in-game telemetry:
-* Uses a **TensorFlow Sequential Deep Autoencoder** to learn normal human gameplay.
-* **Auto-filtering Optimization:** Clean players (**GREEN**) have low reconstruction error and are **automatically removed/discarded immediately** to save server CPU.
+* Uses a **TensorFlow Sequential Deep Autoencoder** to learn normal human gameplay physics.
+* **Auto-filtering Optimization:** Clean players (**GREEN**) have low reconstruction error and are **automatically removed and discarded immediately** to save server CPU.
 * Only **GRAY** (suspicious deviations) and **RED** (critical kinematic exploits) are reported.
 
 #### Python Code:
@@ -111,36 +115,40 @@ Stage 2 runs concurrently and independently during live matches to inspect in-ga
 from cds import ActiveAnomalyDetector
 import numpy as np
 
-stage2 = ActiveAnomalyDetector()
+# 1. Initialize detector (automatically derives adaptive thresholds!)
+stage2 = ActiveAnomalyDetector(auto_scale=True)
 
-# 1. Calibrate on legitimate clean gameplay telemetry
-# Features chosen by YOU (e.g. [speed, elevation, combat_burst, aim_snap])
+# 2. Calibrate on legitimate clean gameplay telemetry
+# $$$ [YOUR_NORMAL_CLEAN_GAMEPLAY_TELEMETRY: e.g. Speed, Elevation, DPM, Aim Jerk] $$$
 X_clean_telemetry = np.array([
-    [0.25, 0.10, 0.20, 0.15],
-    [0.30, 0.12, 0.25, 0.18],
-    [0.22, 0.08, 0.18, 0.12],
+    $$$ [0.25, 0.10, 0.20, 0.15] $$$,
+    $$$ [0.30, 0.12, 0.25, 0.18] $$$,
+    $$$ [0.22, 0.08, 0.18, 0.12] $$$,
 ], dtype=np.float32)
 
-stage2.train_baseline(X_clean_telemetry, epochs=25)
+stage2.train_baseline(X_clean_telemetry, epochs=30)
 
-# 2. Evaluate active players in live match
+# 3. Evaluate active players in live match
+# $$$ [YOUR_LIVE_MATCH_SERVER_TELEMETRY_STREAM] $$$
 X_live_telemetry = np.array([
-    [0.26, 0.11, 0.22, 0.16], # Normal player -> Discarded (GREEN)
-    [0.55, 0.40, 0.50, 0.45], # Moderate anomaly -> GRAY
-    [1.80, 2.50, 2.00, 1.90], # Extreme speed/fly hack -> RED
+    $$$ [0.26, 0.11, 0.22, 0.16] $$$, # Normal player -> Discarded (GREEN)
+    $$$ [0.38, 0.18, 0.28, 0.22] $$$, # Moderate anomaly -> GRAY
+    $$$ [4.80, 5.50, 6.00, 5.90] $$$, # Extreme speed/fly hack -> RED
 ], dtype=np.float32)
 
-live_results = stage2.evaluate_telemetry(X_live_telemetry, player_ids=["P1", "P2", "P3"])
+live_player_ids = $$$ ["P1", "P2", "P3"] $$$
+
+live_results = stage2.evaluate_telemetry(X_live_telemetry, player_ids=live_player_ids)
 # live_results["rosters"]["GRAY"] -> ["P2"]
 # live_results["rosters"]["RED"]  -> ["P3"]
-# P1 was automatically discarded to conserve memory!
+# P1 was automatically discarded to conserve memory and tick CPU!
 ```
 
 ---
 
 ### Step 4: Stage 3 — Agentic Profile Inspector (Seller Intelligence)
 
-Many aggressive cheaters monetize their hacks by putting their contact information (Discord, Telegram, WhatsApp, "DM for cheat") in their profile bio, username, or clan tag.
+Many aggressive cheaters monetize their hacks by putting contact information (Discord, Telegram, WhatsApp, "DM for cheat") in their profile bio, username, or clan tag.
 
 * Stage 3 pulls profile metadata from your database and scans for seller patterns.
 * **Safety Rule:** A profile alone **cannot definitively brand a player RED**. Therefore, Stage 3 outputs **ONLY GREEN and GRAY**.
@@ -151,9 +159,20 @@ from cds import AgenticProfileInspector
 
 stage3 = AgenticProfileInspector()
 
+# $$$ [EXTRACT_USER_PROFILES_FROM_YOUR_GAME_DATABASE] $$$
 profiles = [
-    {"player_id": "P1", "nickname": "Shadow", "clan_tag": "[VIP]", "bio": "Join t.me/fast_cheats for undetected aimbot"},
-    {"player_id": "P2", "nickname": "Viper", "clan_tag": "[TEAM]", "bio": "Having fun with friends"},
+    {
+        "player_id": $$$ "P1" $$$,
+        "nickname": $$$ "Shadow" $$$,
+        "clan_tag": $$$ "[VIP]" $$$,
+        "bio": $$$ "Join t.me/fast_cheats for undetected aimbot & ESP" $$$
+    },
+    {
+        "player_id": $$$ "P2" $$$,
+        "nickname": $$$ "Viper" $$$,
+        "clan_tag": $$$ "[TEAM]" $$$,
+        "bio": $$$ "Having fun with friends in Battleground!" $$$
+    },
 ]
 
 profile_results = stage3.inspect_profiles(profiles)
@@ -177,14 +196,30 @@ Stage 4 runs all models simultaneously and balances their work. Its primary role
 ```python
 from cds import PipelineOrchestrator
 
-orchestrator = PipelineOrchestrator(stage1, stage2, stage3)
+# $$$ [ATTACH_YOUR_STUDIO_MODERATION_CALLBACKS] $$$
+def ban_cheater(player_id, audit_info):
+    # $$$ [STUDIO_DISCONNECT_AND_HWID_BAN_API(player_id)] $$$
+    print(f"Banning {player_id}: {audit_info['reason']}")
+
+def monitor_suspect(player_id, audit_info):
+    # $$$ [STUDIO_INCREASE_TICK_RATE_SAMPLING_AND_RECORD_DEMO_API(player_id)] $$$
+    print(f"Monitoring {player_id}: Telemetry sampled at 128Hz.")
+
+orchestrator = PipelineOrchestrator(
+    stage1_detector=stage1,
+    stage2_detector=stage2,
+    stage3_inspector=stage3,
+    on_gray_action=monitor_suspect,
+    on_red_action=ban_cheater,
+)
 
 # Pass all outputs into the Orchestrator
 final_verdict = orchestrator.harmonize_rosters(
-    all_player_ids=["P1", "P2", "P3"],
+    all_player_ids=$$$ ["P1", "P2", "P3"] $$$,
     stage1_rosters=results["rosters"],
     stage2_rosters=live_results["rosters"],
     stage3_rosters=profile_results["rosters"],
+    match_id=$$$ "MATCH_BATTLEGROUND_8819" $$$,
 )
 
 print("GREEN (Clean)    :", final_verdict["rosters"]["GREEN"])

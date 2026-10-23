@@ -1,37 +1,61 @@
 """
 Stage 4: Central Pipeline Orchestrator & Consensus Engine
----------------------------------------------------------
-Runs Stage 1, Stage 2, and Stage 3 simultaneously and balances their workloads.
-Routes the cross-model GRAY lists and executes the Consensus Rules:
-  - Direct RED: Any direct RED from Stage 1 or Stage 2 -> RED list.
-  - 3-GRAY Promotion Rule: Flagged as GRAY in ALL THREE models -> Promoted to RED!
-  - 2-GRAY Retention Rule: Flagged as GRAY in only 1 or 2 models -> Kept in GRAY.
-  - Clean Baseline: Otherwise -> GREEN.
-Outputs the final classified rosters (GREEN / GRAY / RED) for developer handover:
-  - GREEN: Developer frees the player (normal matchmaking).
-  - GRAY: Developer monitors the player (high-tick sampling, demo logging).
-  - RED: Developer bans / quarantines the player.
+=========================================================
+Coordinates Stage 1, Stage 2, and Stage 3 models simultaneously and balances their work.
+Routes cross-model GRAY lists and executes the Consensus Rules:
+
+Consensus Rules:
+  1. Direct RED: Any direct RED from Stage 1 DB or Stage 2 Telemetry -> RED list.
+  2. The 3-GRAY Promotion Rule: Flagged as GRAY across ALL THREE models -> Promoted to RED!
+  3. The 2-GRAY Retention Rule: Flagged as GRAY in only 1 or 2 models -> Kept in GRAY (monitor queue).
+  4. Nominal Baseline: Otherwise -> GREEN list.
+
+Developer Handover Responsibility:
+  - GREEN: Free the player (normal matchmaking).
+  - GRAY: Monitor the player (128Hz telemetry recording, full demo replay, soft trust queue).
+  - RED: Ban or quarantine the player (match disconnect, HWID/account ban, shadow-lobbies).
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Callable
+from datetime import datetime, timezone
+import logging
+
 from .passive_nlp import PassiveNLPDetector
 from .active_anomaly import ActiveAnomalyDetector
 from .agentic_profile import AgenticProfileInspector
 
+logger = logging.getLogger("cds.orchestrator")
+
 
 class PipelineOrchestrator:
+    """
+    Central consensus engine coordinating multi-modal anti-cheat detection stages.
+    """
+
     def __init__(
         self,
         stage1_detector: Optional[PassiveNLPDetector] = None,
         stage2_detector: Optional[ActiveAnomalyDetector] = None,
         stage3_inspector: Optional[AgenticProfileInspector] = None,
+        on_green_action: Optional[Callable[[str], None]] = None,
+        on_gray_action: Optional[Callable[[str, Dict[str, Any]], None]] = None,
+        on_red_action: Optional[Callable[[str, Dict[str, Any]], None]] = None,
     ):
         """
-        Initializes the Stage 4 Orchestrator.
+        :param stage1_detector: Configured Stage 1 Passive NLP Detector.
+        :param stage2_detector: Configured Stage 2 Active Anomaly Detector.
+        :param stage3_inspector: Configured Stage 3 Agentic Profile Inspector.
+        :param on_green_action: Optional developer callback for GREEN players.
+        :param on_gray_action: Optional developer callback for GRAY players.
+        :param on_red_action: Optional developer callback for RED players.
         """
         self.stage1 = stage1_detector or PassiveNLPDetector()
         self.stage2 = stage2_detector or ActiveAnomalyDetector()
         self.stage3 = stage3_inspector or AgenticProfileInspector()
+
+        self.on_green_action = on_green_action
+        self.on_gray_action = on_gray_action
+        self.on_red_action = on_red_action
 
     def harmonize_rosters(
         self,
@@ -39,13 +63,10 @@ class PipelineOrchestrator:
         stage1_rosters: Dict[str, List[str]],
         stage2_rosters: Dict[str, List[str]],
         stage3_rosters: Dict[str, List[str]],
+        match_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        Cross-evaluates the outputs of all three models using the Consensus Rules:
-          1. Direct RED from Stage 1 or Stage 2 -> RED
-          2. Flagged as GRAY in ALL 3 models -> RED (3-Gray Promotion)
-          3. Flagged as GRAY in 1 or 2 models -> GRAY (Retained in monitor queue)
-          4. Otherwise -> GREEN
+        Consolidates outputs across Stage 1, Stage 2, and Stage 3 into final GREEN/GRAY/RED rosters.
         """
         s1_red = set(stage1_rosters.get("RED", []))
         s1_gray = set(stage1_rosters.get("GRAY", []))
@@ -55,10 +76,12 @@ class PipelineOrchestrator:
 
         s3_gray = set(stage3_rosters.get("GRAY", []))
 
-        final_rosters = {"GREEN": [], "GRAY": [], "RED": []}
-        audit_trail = {}
+        final_rosters: Dict[str, List[str]] = {"GREEN": [], "GRAY": [], "RED": []}
+        audit_trail: Dict[str, Dict[str, Any]] = {}
 
-        for pid in sorted(set(all_player_ids)):
+        unique_players = sorted(set(all_player_ids))
+
+        for pid in unique_players:
             is_direct_red = (pid in s1_red) or (pid in s2_red)
 
             is_s1_g = pid in s1_gray
@@ -80,18 +103,31 @@ class PipelineOrchestrator:
                 reason = "ALL_MODELS_CLEAN (Nominal gameplay baseline)"
 
             final_rosters[final_tier].append(pid)
-            audit_trail[pid] = {
+
+            audit_info = {
+                "player_id": pid,
                 "final_tier": final_tier,
                 "reason": reason,
                 "stage1_status": "RED" if pid in s1_red else ("GRAY" if is_s1_g else "GREEN"),
                 "stage2_status": "RED" if pid in s2_red else ("GRAY" if is_s2_g else "GREEN"),
                 "stage3_status": "GRAY" if is_s3_g else "GREEN",
-                "gray_count": gray_count,
+                "gray_overlap_count": gray_count,
             }
+            audit_trail[pid] = audit_info
 
-        return {
+            # Execute optional developer callbacks
+            if final_tier == "GREEN" and self.on_green_action:
+                self.on_green_action(pid)
+            elif final_tier == "GRAY" and self.on_gray_action:
+                self.on_gray_action(pid, audit_info)
+            elif final_tier == "RED" and self.on_red_action:
+                self.on_red_action(pid, audit_info)
+
+        payload = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "match_id": match_id or "MATCH_UNSPECIFIED",
             "summary": {
-                "total_players": len(all_player_ids),
+                "total_players": len(unique_players),
                 "green_count": len(final_rosters["GREEN"]),
                 "gray_count": len(final_rosters["GRAY"]),
                 "red_count": len(final_rosters["RED"]),
@@ -99,8 +135,17 @@ class PipelineOrchestrator:
             "rosters": final_rosters,
             "audit_trail": audit_trail,
             "developer_handover": {
-                "GREEN": "Free / Allow normal play.",
-                "GRAY": "Monitor / Increase tick sampling rate, record demo, soft trust queue.",
-                "RED": "Ban or Quarantine / Disconnect, HWID ban, or route to shadow-lobbies.",
-            }
+                "GREEN": "Free / Allow normal play. Telemetry archived.",
+                "GRAY": "Monitor / Increase tickrate to 128Hz, record full demo, queue for review.",
+                "RED": "Ban or Quarantine / Immediate disconnect, HWID ban, or route to shadow-lobbies.",
+            },
         }
+
+        logger.info(
+            "Consensus executed. Total: %d | GREEN: %d | GRAY: %d | RED: %d",
+            len(unique_players),
+            len(final_rosters["GREEN"]),
+            len(final_rosters["GRAY"]),
+            len(final_rosters["RED"]),
+        )
+        return payload

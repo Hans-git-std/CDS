@@ -3,13 +3,13 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Framework-Cheat_Detection_System_(CDS)-0F2942?style=for-the-badge&logo=shield&logoColor=white" alt="CDS System" />
   <img src="https://img.shields.io/badge/ML_Engine-TensorFlow_2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" alt="TensorFlow" />
-  <img src="https://img.shields.io/badge/Status-Developer_Framework-10B981?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Status-Production_Ready-10B981?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/License-Proprietary_(View--Only)-E11D48?style=for-the-badge" alt="License" />
 </p>
 
 <p align="center">
   <strong>A Developer-Implemented Multi-Stage Anti-Cheat Framework Powered by TensorFlow</strong><br>
-  <em>Designed for modern multiplayer titles (e.g. Battlegrounds, Battle Royales, competitive shooters) using Passive NLP, Active Telemetry Autoencoders, and Agentic Profile Intelligence.</em>
+  <em>Engineered for modern multiplayer titles (e.g. Battlegrounds, Battle Royales, competitive shooters) using Passive NLP, Active Telemetry Autoencoders, and Agentic Profile Intelligence.</em>
 </p>
 
 ---
@@ -18,10 +18,12 @@
 
 1. **Features are Decided by the Developer (YOU), Not by Us:**  
    CDS is completely feature-agnostic. Whether your game tracks 4 features or 40 features, the models dynamically adapt to your input dimensions. We guide you on feature selection, but you retain full control over your telemetry.
-2. **Powered by TensorFlow:**  
-   Uses standard `tf.keras.Sequential` architectures for both supervised historical feature classification and unsupervised real-time anomaly detection.
-3. **Designed for Easy Implementation:**  
-   Even a beginner or junior developer can integrate CDS into their game in a single afternoon.
+2. **`$$$ info $$$` Marker Convention:**  
+   Every developer-configurable section, custom feature list, and studio integration point is explicitly marked between **`$$$ info $$$`** markers (e.g. `$$$ YOUR_CHOSEN_DATABASE_FEATURES $$$`, `$$$ YOUR_LIVE_TELEMETRY_STREAM $$$`, `$$$ YOUR_BAN_CALLBACK $$$`). This makes it immediately obvious where you plug in your game data!
+3. **Powered by TensorFlow:**  
+   Uses standard `tf.keras.Sequential` architectures for supervised historical feature classification and deep Autoencoders for real-time anomaly detection.
+4. **Designed for Easy Implementation:**  
+   Even a beginner or junior developer can integrate CDS into their game in a single afternoon by following [**`battleground-implementation.md`**](battleground-implementation.md).
 
 ---
 
@@ -106,7 +108,7 @@ You decide which features to pass into the detectors! Here are recommended types
 
 | Detector Stage | Recommended Feature Types (Examples) | How to Prepare |
 | :--- | :--- | :--- |
-| **Stage 1 (Passive DB)** | Cumulative Win Rate, Lifetime K/D, Headshot %, Damage per match, Account age | Scale numerical features to approximately $[0.0, 1.0]$. |
+| **Stage 1 (Passive DB)** | Cumulative Win Rate, Lifetime K/D, Headshot %, Damage per match, Account age | CDS built-in `FeatureScaler` automatically scales features to $[0.0, 1.0]$. |
 | **Stage 2 (Active Telemetry)** | Horizontal movement speed, vertical height delta, real-time DPM, angular aim jerk | Normalize tick values relative to maximum natural sprint/aim limits. |
 | **Stage 3 (Profile Agent)** | Profile status bio, custom nickname, clan tag | Raw text strings from user profile table. |
 
@@ -115,27 +117,34 @@ You decide which features to pass into the detectors! Here are recommended types
 ## ⚡ Quickstart Example (Python)
 
 ```python
-from cds import PassiveNLPDetector, ActiveAnomalyDetector, AgenticProfileInspector, PipelineOrchestrator
+from cds import (
+    PassiveNLPDetector,
+    ActiveAnomalyDetector,
+    AgenticProfileInspector,
+    PipelineOrchestrator
+)
 import numpy as np
 
-# 1. Initialize models
-stage1 = PassiveNLPDetector()
-stage2 = ActiveAnomalyDetector()
+# 1. Initialize models with automatic feature scaling
+stage1 = PassiveNLPDetector(auto_scale=True)
+stage2 = ActiveAnomalyDetector(auto_scale=True)
 stage3 = AgenticProfileInspector()
 orchestrator = PipelineOrchestrator(stage1, stage2, stage3)
 
 # 2. Train Stage 1 with your Ground-Truth Answer Key (0=GREEN, 1=RED)
-X_db_train = np.array([[0.05, 0.10], [0.08, 0.12], [0.92, 0.95]], dtype=np.float32)
-y_db_train = np.array([0, 0, 1], dtype=np.float32)
-stage1.train(X_db_train, y_db_train, epochs=20)
+# $$$ [YOUR_DATABASE_TRAINING_SAMPLES_AND_ANSWER_KEY] $$$
+X_db_train = np.array([$$$ [0.05, 0.10] $$$, $$$ [0.08, 0.12] $$$, $$$ [0.92, 0.95] $$$], dtype=np.float32)
+y_db_train = np.array([$$$ 0 $$$, $$$ 0 $$$, $$$ 1 $$$], dtype=np.float32)
+stage1.train(X_db_train, y_db_train, epochs=25)
 
 # 3. Train Stage 2 Autoencoder on clean gameplay telemetry
-X_clean_telem = np.array([[0.20, 0.15], [0.25, 0.18]], dtype=np.float32)
-stage2.train_baseline(X_clean_telem, epochs=20)
+# $$$ [YOUR_NORMAL_CLEAN_GAMEPLAY_TELEMETRY] $$$
+X_clean_telem = np.array([$$$ [0.20, 0.15] $$$, $$$ [0.25, 0.18] $$$], dtype=np.float32)
+stage2.train_baseline(X_clean_telem, epochs=25)
 
 # 4. Run full orchestrator on active players
 final_results = orchestrator.harmonize_rosters(
-    all_player_ids=["P101", "P102"],
+    all_player_ids=$$$ ["P101", "P102"] $$$,
     stage1_rosters={"GREEN": ["P101"], "GRAY": ["P102"], "RED": []},
     stage2_rosters={"GRAY": ["P102"], "RED": []},
     stage3_rosters={"GREEN": ["P101"], "GRAY": ["P102"]},
@@ -169,12 +178,15 @@ CDS/
 ├── generate_docs.py                          # Script to regenerate Word document
 ├── cds/                                       # Core Python package
 │   ├── __init__.py                            # Package exports
+│   ├── scaler.py                              # Feature scaling utilities (MinMax, Standard, Robust)
 │   ├── passive_nlp.py                         # Stage 1: TensorFlow Sequential DB model
 │   ├── active_anomaly.py                      # Stage 2: TensorFlow Autoencoder telemetry model
 │   ├── agentic_profile.py                     # Stage 3: Profile & cheat-seller inspector
 │   └── orchestrator.py                        # Stage 4: Orchestrator & 3-Gray consensus engine
 ├── examples/
 │   └── quickstart_tutorial.py                 # Full beginner-friendly tutorial simulation
+├── tests/
+│   └── test_pipeline.py                       # Automated test suite (8 tests)
 ├── docs/
 │   ├── ARCHITECTURE.md                        # Technical subsystem & TensorFlow architecture
 │   └── ANALYSIS_AND_IMPROVEMENTS.md           # Engineering analysis, gaps & recommendations
@@ -183,13 +195,20 @@ CDS/
 
 ---
 
-## 🧪 Run the Tutorial Locally
+## 🧪 Run the Tutorial & Automated Tests Locally
 
 Run the complete 4-stage tutorial simulation with TensorFlow:
 
 ```powershell
 cd D:\Project\CDS\examples
 uv run --with tensorflow python quickstart_tutorial.py
+```
+
+Run the automated test suite:
+
+```powershell
+cd D:\Project\CDS
+uv run --with tensorflow python -m unittest discover -s tests
 ```
 
 ---

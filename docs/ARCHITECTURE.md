@@ -44,7 +44,16 @@ This document specifies the internal engineering, TensorFlow neural network arch
 
 ---
 
-## 2. TensorFlow Model Specifications
+## 2. Component Engineering & TensorFlow Specifications
+
+### 2.0 Feature Preprocessing & Scaling (`FeatureScaler`)
+Anti-cheat datasets exhibit heterogeneous distributions (e.g. win rates $\in [0, 1]$, K/D ratios $\in [0, 50]$, DPM $\in [0, 4000]$).
+CDS provides an embedded `FeatureScaler` supporting:
+* **MinMax Normalization:** $x_{\text{scaled}} = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$ (Used by Stage 1).
+* **Z-Score Standardization:** $z = \frac{x - \mu}{\sigma}$ (Used by Stage 2 to prevent clamping extreme kinematic telemetry anomalies).
+* **Missing Value Imputation:** Column-median substitution for packet drops or null values.
+
+---
 
 ### 2.1 Stage 1: Passive Detector (TensorFlow Sequential)
 Stage 1 accepts an arbitrary numerical feature matrix $X \in \mathbb{R}^{N \times D}$ representing historical player stats extracted from the game database.

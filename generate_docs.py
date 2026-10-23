@@ -62,18 +62,17 @@ def create_document(output_path):
     subtitle_run.font.size = Pt(13)
     subtitle_run.font.color.rgb = teal_color
 
-    meta_table = doc.add_table(rows=6, cols=2)
-    meta_table.alignment = WD_TABLE_ALIGNMENT.LEFT
-    meta_table.autofit = False
-    
     meta_data = [
         ("Framework Name:", "Cheat Detection System (CDS)"),
-        ("Machine Learning Engine:", "TensorFlow 2.x (Sequential Models & Autoencoders)"),
-        ("Feature Philosophy:", "Feature-Agnostic (Decided dynamically by the developer)"),
+        ("Machine Learning Engine:", "TensorFlow 2.x (Sequential Models & Deep Autoencoders)"),
+        ("Feature Philosophy:", "Feature-Agnostic (Dynamic developer-defined features + FeatureScaler)"),
+        ("Integration Syntax:", "$$$ info $$$ Markers for all studio-specific parameters"),
         ("Operational Pipeline:", "4-Stage Hybrid (Passive NLP + Active Anomaly + Profile Agent + Orchestrator)"),
         ("Consensus Engine:", "3-GRAY Promotion Rule (3x GRAY ===> RED) & 2-GRAY Retention"),
-        ("Specification Version:", "2.1.0-PRODUCTION (October 2026)")
+        ("Specification Version:", "2.2.0-PRODUCTION (October 2026)")
     ]
+
+    meta_table = doc.add_table(rows=len(meta_data), cols=2)
     
     for i, (k, v) in enumerate(meta_data):
         row = meta_table.rows[i]
