@@ -30,6 +30,14 @@ logger = logging.getLogger("cds.passive_nlp")
 class PassiveNLPDetector:
     """
     High-performance TensorFlow Sequential classifier for historical game database telemetry.
+
+    Architecture (5-Layer Sequential Neural Network as specified by CDS design):
+      - Layer 1: Input / Feature Projection Dense Layer (input_dim units, ReLU)
+                 [Guidance: 64 to 128 historical features recommended for game developers]
+      - Layer 2 (Mid 1): Dense(input_dim // 2 units, ReLU)
+      - Layer 3 (Mid 2): Dense(input_dim // 2 units, ReLU)
+      - Layer 4 (Mid 3): Dense(input_dim // 4 units, ReLU)
+      - Layer 5 (Output): Dense(1 unit, Sigmoid) -> Continuous Cheat Probability [0.0 to 1.0]
     """
 
     def __init__(
@@ -37,17 +45,18 @@ class PassiveNLPDetector:
         input_dim: Optional[int] = None,
         gray_threshold_low: float = 0.35,
         gray_threshold_high: float = 0.75,
-        hidden_units: Tuple[int, ...] = (64, 32),
-        dropout_rate: float = 0.20,
+        hidden_units: Optional[Tuple[int, ...]] = None,
+        dropout_rate: float = 0.15,
         learning_rate: float = 0.01,
         auto_scale: bool = True,
     ):
         """
-        :param input_dim: Number of developer-defined features (e.g. 4, 10, 30).
-        :param gray_threshold_low: Risk score threshold below which player is GREEN.
-        :param gray_threshold_high: Risk score threshold above which player is RED.
-               Scores in [gray_threshold_low, gray_threshold_high] are marked GRAY.
-        :param hidden_units: Tuple defining neuron counts in intermediate Dense layers.
+        :param input_dim: Number of developer-defined features (recommended: 64 to 128).
+        :param gray_threshold_low: Risk score threshold below which player is GREEN (Clean).
+        :param gray_threshold_high: Risk score threshold above which player is RED (Cheater).
+               Scores in [gray_threshold_low, gray_threshold_high] are marked GRAY (Suspicious).
+        :param hidden_units: Optional custom tuple of neuron counts. If None, uses the standard
+               5-layer CDS design: [input_dim, input_dim // 2, input_dim // 2, input_dim // 4, 1].
         :param dropout_rate: Regularization dropout probability.
         :param learning_rate: Adam optimizer learning rate.
         :param auto_scale: Whether to automatically fit and transform features with FeatureScaler.
@@ -69,32 +78,58 @@ class PassiveNLPDetector:
 
     def build_model(self, input_dim: int) -> tf.keras.Sequential:
         """
-        Builds and compiles the TensorFlow Sequential Model.
-        Architecture:
-          - InputLayer(shape=(input_dim,))
-          - Dense(hidden_units[0], activation='relu')
-          - Dropout(dropout_rate)
-          - Dense(hidden_units[1], activation='relu')
-          - Dense(1, activation='sigmoid') -> Continuous probability [0.0, 1.0]
+        Defines the 5-layer TensorFlow Sequential Model for historical feature classification:
+          - Layer 1: Dense(units=input_dim, activation='relu') [Guide: 64-128 features recommended]
+          - Layer 2 (Mid 1): Dense(units=input_dim // 2, activation='relu')
+          - Layer 3 (Mid 2): Dense(units=input_dim // 2, activation='relu')
+          - Layer 4 (Mid 3): Dense(units=input_dim // 4, activation='relu')
+          - Layer 5 (Output): Dense(units=1, activation='sigmoid') -> Continuous Risk Score [0.0 to 1.0]
         """
         self.input_dim = input_dim
-        layers = [tf.keras.layers.Input(shape=(input_dim,))]
 
-        for units in self.hidden_units:
-            layers.append(tf.keras.layers.Dense(units, activation="relu"))
-            if self.dropout_rate > 0.0:
-                layers.append(tf.keras.layers.Dropout(self.dropout_rate))
+        # Calculate neuron counts following the 5-layer CDS specification
+        if self.hidden_units is not None:
+            units_list = list(self.hidden_units)
+        else:
+            # Standard 5-layer CDS design:
+            # Layer 1: input_dim (guided 64 to 128 for developers; floor of 64 provides capacity for toy feature sets)
+            # Layer 2 (Mid 1): input // 2
+            # Layer 3 (Mid 2): input // 2
+            # Layer 4 (Mid 3): input // 4
+            # Layer 5 (Output): 1 (sigmoid)
+            base_dim = max(int(input_dim), 64)
+            l1_units = base_dim
+            l2_units = max(int(base_dim // 2), 32)
+            l3_units = max(int(base_dim // 2), 32)
+            l4_units = max(int(base_dim // 4), 16)
+            units_list = [l1_units, l2_units, l3_units, l4_units]
 
-        # Output layer with Sigmoid activation for binary risk probability
-        layers.append(tf.keras.layers.Dense(1, activation="sigmoid"))
+        layers = [
+            tf.keras.layers.Input(shape=(input_dim,)),
+            tf.keras.layers.Dense(units_list[0], activation="relu", name="dense_l1_input_project"),
+        ]
 
-        self.model = tf.keras.Sequential(layers)
+        if self.dropout_rate > 0.0:
+            layers.append(tf.keras.layers.Dropout(self.dropout_rate, name="dropout_1"))
+
+        # Mid layers 2, 3, 4
+        for idx, units in enumerate(units_list[1:], start=2):
+            layers.append(tf.keras.layers.Dense(units, activation="relu", name=f"dense_l{idx}_mid"))
+
+        # Layer 5: Output layer with Sigmoid activation for binary risk probability
+        layers.append(tf.keras.layers.Dense(1, activation="sigmoid", name="dense_l5_output_risk"))
+
+        self.model = tf.keras.Sequential(layers, name="cds_stage1_passive_nlp")
         self.model.compile(
             optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
             loss="binary_crossentropy",
             metrics=["accuracy"],
         )
-        logger.info("Stage 1 TensorFlow model compiled with input_dim=%d", input_dim)
+        logger.info(
+            "Stage 1 5-Layer TensorFlow model compiled with input_dim=%d, layers=%s, output=1",
+            input_dim,
+            units_list,
+        )
         return self.model
 
     def train(
@@ -231,7 +266,7 @@ class PassiveNLPDetector:
             "input_dim": self.input_dim,
             "gray_threshold_low": self.gray_threshold_low,
             "gray_threshold_high": self.gray_threshold_high,
-            "hidden_units": list(self.hidden_units),
+            "hidden_units": list(self.hidden_units) if self.hidden_units is not None else None,
             "dropout_rate": self.dropout_rate,
             "learning_rate": self.learning_rate,
             "auto_scale": self.auto_scale,
@@ -248,11 +283,12 @@ class PassiveNLPDetector:
         with open(meta_path, "r", encoding="utf-8") as f:
             meta = json.load(f)
 
+        hidden_units_val = tuple(meta["hidden_units"]) if meta.get("hidden_units") is not None else None
         detector = cls(
             input_dim=meta["input_dim"],
             gray_threshold_low=meta["gray_threshold_low"],
             gray_threshold_high=meta["gray_threshold_high"],
-            hidden_units=tuple(meta["hidden_units"]),
+            hidden_units=hidden_units_val,
             dropout_rate=meta["dropout_rate"],
             learning_rate=meta["learning_rate"],
             auto_scale=meta["auto_scale"],
