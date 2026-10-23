@@ -1,126 +1,126 @@
-# 📐 CDS Technical Architecture & Systems Specification
+# 📐 CDS Technical Architecture & Systems Engineering
 
-This document details the formal technical architecture for the **Cheat Detection System (CDS)**, specifying data structures, feature scaling equations, telemetry streaming protocols, and the Stage 4 consensus resolution engine.
+This document specifies the internal engineering, TensorFlow neural network architectures, anomaly reconstruction equations, and consensus mechanics of the **Cheat Detection System (CDS)**.
 
 ---
 
-## 1. System Topology & Pipeline Overview
-
-CDS is structured around a **4-stage decoupled processing architecture** designed for high-concurrency multiplayer titles (such as 100-player Battleground games):
+## 1. System Topology & Processing Tiers
 
 ```
 +---------------------------------------------------------------------------------------------------+
-|                                   DATA INGESTION BOUNDARIES                                       |
+|                                 DEVELOPER INTEGRATION BOUNDARIES                                  |
 |                                                                                                   |
-|    +-----------------------------+                     +-------------------------------------+    |
-|    | Historical Game Database    |                     | Dedicated Game Server Instances     |    |
-|    | (PostgreSQL / Redis / Mongo)|                     | (Live Match 64-128Hz Simulation)    |    |
-|    +-----------------------------+                     +-------------------------------------+    |
-|                   |                                                       |                       |
-|                   v (Historical Records)                                  v (gRPC Telemetry)      |
-|    +-----------------------------+                     +-------------------------------------+    |
-|    | Stage 1: Passive NLP Engine |                     | Stage 2: Active Anomaly Engine      |    |
-|    | • Feature Scaling & Tokens  |                     | • Movement speed, Elevation/Height  |    |
-|    | • Cold-Start Training Mode  |                     | • Real-time DPM, Headshot Rate      |    |
-|    | • Outputs: GREEN, GRAY, RED |                     | • Discards GREEN -> GRAY / RED      |    |
-|    +-----------------------------+                     +-------------------------------------+    |
-|                   |                                                       |                       |
-|                   +-----------------------+       +-----------------------+                       |
+|    +----------------------------------+             +----------------------------------------+    |
+|    | Game Database (Historical Stats) |             | Game Server Telemetry (Live Stream)    |    |
+|    | Features chosen by DEVELOPER     |             | Features chosen by DEVELOPER           |    |
+|    +----------------------------------+             +----------------------------------------+    |
+|                     |                                                   |                         |
+|                     v                                                   v                         |
+|    +----------------------------------+             +----------------------------------------+    |
+|    | STAGE 1: PASSIVE NLP DETECTOR    |             | STAGE 2: ACTIVE ANOMALY DETECTOR       |    |
+|    | • TensorFlow Sequential Model    |             | • TensorFlow Sequential Autoencoder    |    |
+|    | • Trained on Answer Key (0 & 1)  |             | • Trained on normal telemetry          |    |
+|    | • Outputs: GREEN, GRAY, RED      |             | • Drops GREEN early -> GRAY, RED       |    |
+|    +----------------------------------+             +----------------------------------------+    |
+|                     |                                                   |                         |
+|                     +---------------------+       +---------------------+                         |
 |                                           |       |                                               |
 |                                           v       v                                               |
-|    +-----------------------------+   +-------------------------------------------------------+    |
-|    | Player Profile & Social DB  |   | Stage 4: Central Orchestrator & Consensus Engine      |    |
-|    | (Bio, Nickname, Clan Tags)  |   | • Coordinates simultaneous model execution            |    |
-|    +-----------------------------+   | • Aggregates & routes cross-model GRAY lists          |    |
-|                   |                  | • 3-GRAY Promotion Rule: 3x GRAY ===> RED!            |    |
-|                   v (Profile Data)   | • 2-GRAY Retention Rule: 2x GRAY ===> Keep in GRAY    |    |
-|    +-----------------------------+   +-------------------------------------------------------+    |
-|    | Stage 3: Agentic Profile    |                                |                               |
-|    |   Inspector                 |                                |                               |
-|    | • Detects seller handles    |                                v                               |
-|    | • Discord / Telegram regex  |   +-------------------------------------------------------+    |
-|    | • Outputs: GREEN / GRAY only|   | Final Classified Rosters: [ GREEN | GRAY | RED ]      |    |
-|    +-----------------------------+   | Developer Handover: Free | Monitor | Ban              |    |
-|                   |                  +-------------------------------------------------------+    |
-|                   +-----------------------------------------------+                               |
+|    +----------------------------------+   +--------------------------------------------------+    |
+|    | Player Profiles & Social Metadata|   | STAGE 4: CENTRAL PIPELINE ORCHESTRATOR           |    |
+|    | (Bio, Nickname, Clan Tags)       |   | • Balances simultaneous execution                |    |
+|    +----------------------------------+   | • Aggregates and cross-routes GRAY lists         |    |
+|                     |                     | • 3-GRAY Promotion Rule: 3x GRAY ===> RED!       |    |
+|                     v                     | • 2-GRAY Retention Rule: 2x GRAY ===> Keep GRAY  |    |
+|    +----------------------------------+   +--------------------------------------------------+    |
+|    | STAGE 3: AGENTIC PROFILE AGENT   |                             |                             |
+|    | • Scans for cheat sellers (DC/TG)|                             v                             |
+|    | • Outputs: GREEN / GRAY only     |   +--------------------------------------------------+    |
+|    +----------------------------------+   | FINAL CLASSIFIED ROSTERS: [ GREEN | GRAY | RED ] |    |
+|                     |                     | Developer Handover: Free | Monitor | Ban         |    |
+|                     +-------------------->+--------------------------------------------------+    |
 +---------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
-## 2. Stage-by-Stage Specifications
+## 2. TensorFlow Model Specifications
 
-### 2.1 Stage 1: Passive Detector (Historical Game Database)
-The Passive Detector operates periodically (e.g. daily batch or post-match aggregation) against the game database.
+### 2.1 Stage 1: Passive Detector (TensorFlow Sequential)
+Stage 1 accepts an arbitrary numerical feature matrix $X \in \mathbb{R}^{N \times D}$ representing historical player stats extracted from the game database.
 
-#### Feature Scaling:
-Features are normalized against empirical population limits:
-* **Win Rate ($w$):** $w_{\text{norm}} = \min\left(\frac{w}{0.50}, 2.0\right)$
-* **K/D Ratio ($k$):** $k_{\text{norm}} = \min\left(\frac{k}{10.0}, 2.0\right)$
-* **Headshot Ratio ($h$):** $h_{\text{norm}} = \min\left(\frac{h}{0.75}, 2.0\right)$
-* **Damage Per Match ($d$):** $d_{\text{norm}} = \min\left(\frac{d}{2000.0}, 2.0\right)$
-
-#### Semantic Serialization:
-Normalized values are converted to structured tokens for the language model:
-```
-<PLAYER_ID:P102> WIN_RATE_NORM:0.76 KD_NORM:0.48 HS_NORM:0.64 DMG_NORM:0.49
+#### Architecture:
+```python
+tf.keras.Sequential([
+    tf.keras.layers.Input(shape=(input_dim,)),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')  # Continuous risk score [0, 1]
+])
 ```
 
-#### Cold-Start Training Mode:
-When initialized, the developer supplies an Answer Key containing binary labels:
-$$\mathcal{D}_{\text{train}} = \{(x_i, y_i) \mid y_i \in \{\text{GREEN}, \text{RED}\}\}$$
-Ground-truth contains **no intermediate GRAY**. During inference, the continuous model score $S_1 \in [0, 1]$ partitions players:
-$$\text{Verdict}_{S1}(x) = \begin{cases} \text{GREEN} & \text{if } S_1 < 0.35 \\ \text{GRAY} & \text{if } 0.35 \le S_1 < 0.75 \\ \text{RED} & \text{if } S_1 \ge 0.75 \end{cases}$$
+#### Loss & Optimizer:
+* **Loss Function:** Binary Cross-Entropy
+  $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^N \left( y_i \log(\hat{y}_i) + (1 - y_i)\log(1 - \hat{y}_i) \right)$$
+* **Optimizer:** Adam ($\alpha = 0.01$)
+
+#### Training Mode vs. Inference Partitioning:
+* **Training Mode:** The developer supplies a ground-truth Answer Key where labels are binary:
+  $$y_i \in \{0, 1\} \quad (0 = \text{GREEN}, \ 1 = \text{RED})$$
+  *(Ground-truth training contains NO mid-tier GRAY).*
+* **Inference Partitioning:**
+  $$\text{Tier}_{S1}(x) = \begin{cases} \text{GREEN} & \text{if } \hat{y} < 0.35 \\ \text{GRAY} & \text{if } 0.35 \le \hat{y} < 0.75 \\ \text{RED} & \text{if } \hat{y} \ge 0.75 \end{cases}$$
 
 ---
 
-### 2.2 Stage 2: Active Detector (Real-Time Live Telemetry)
-The Active Detector evaluates streaming tick data from dedicated game servers.
+### 2.2 Stage 2: Active Anomaly Detector (TensorFlow Sequential Autoencoder)
+Stage 2 accepts streaming real-time telemetry vectors $X_{\text{telem}} \in \mathbb{R}^{N \times K}$ from active matches.
 
-#### Real-Time Telemetry Metrics:
-1. **Kinematic Movement Speed ($v$):**
-   $$v = \frac{\sqrt{\Delta x^2 + \Delta y^2}}{\Delta t}$$
-   Threshold: If $v > 1.8 \cdot v_{\text{sprint\_max}}$, flag instant RED (Speed hack).
-2. **Elevation / Z-Axis Velocity ($v_z$):**
-   Detects fly-hacks or artificial hovering when terrain height gradient $\nabla Z_{\text{terrain}} \approx 0$.
-3. **Damage Per Minute (DPM) & Headshot Rate:**
-   Flags impossible burst rates (e.g., $DPM > 2700$ with $HS\% > 80\%$).
-4. **Micro-Aim Snapping:**
-   Measures angular jerk ($\frac{d^3\theta}{dt^3}$) and discontinuous velocity changes.
+#### Architecture:
+```python
+tf.keras.Sequential([
+    # Input
+    tf.keras.layers.Input(shape=(input_dim,)),
+    # Encoder
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(16, activation='relu'),
+    tf.keras.layers.Dense(8, activation='relu'),   # Latent bottleneck
+    # Decoder
+    tf.keras.layers.Dense(16, activation='relu'),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(input_dim, activation='linear') # Reconstruction
+])
+```
 
-#### Filtering Logic:
-* **GREEN Players:** Discarded immediately without database logging to conserve server memory and CPU.
-* **GRAY & RED Players:** Emitted to the streaming bus for Stage 4 ingestion.
+#### Anomaly Reconstruction Error:
+Given an input vector $x$ and its autoencoder reconstruction $\hat{x}$, the Mean Squared Error (MSE) is:
+
+$$\text{MSE}(x, \hat{x}) = \frac{1}{K} \sum_{j=1}^K (x_j - \hat{x}_j)^2$$
+
+#### Alerting Behavior:
+* **GREEN:** $\text{MSE} < 0.08$ $\rightarrow$ **Removed / Discarded immediately** (omitted from reporting to conserve server memory and CPU).
+* **GRAY:** $0.08 \le \text{MSE} < 0.25$ $\rightarrow$ Reported as suspicious telemetry.
+* **RED:** $\text{MSE} \ge 0.25$ $\rightarrow$ Reported as critical kinematic exploit.
 
 ---
 
 ### 2.3 Stage 3: Agentic Profile Inspector (Seller Intelligence)
-Aggressive cheat users frequently utilize their public gamer profiles to sell scripts, mod menus, and private configs.
-
-#### Inspection Scope:
-* `nickname`
-* `clan_tag`
-* `bio_status`
-* `external_social_handles`
-
-#### Pattern & Keyword Detection:
-* Keywords: `cheat`, `hack`, `aimbot`, `esp`, `mod menu`, `vip config`, `undetected`, `script`.
-* Communication Platforms: `t.me/`, `telegram`, `discord.gg`, `dc:`, `whatsapp`, `wa.me`.
+Analyzes user metadata (profile bio text, custom nicknames, clan tags) to detect commercial cheat distributors advertising on external channels (Discord, Telegram, WhatsApp).
 
 #### Safety Invariant:
-A player's bio text alone **cannot definitively trigger a permanent ban**. Therefore:
 $$\text{Output}_{S3} \in \{\text{GREEN}, \text{GRAY}\}$$
-(Stage 3 never emits RED directly).
+*(Stage 3 never outputs RED on profile text alone).*
 
 ---
 
 ### 2.4 Stage 4: Central Pipeline Orchestrator & Consensus Engine
 
-Stage 4 unifies the independent streams using the **Cross-Model Consensus Matrix**:
+Stage 4 runs all models simultaneously and merges their output rosters:
 
-Let $S_1(p), S_2(p), S_3(p)$ be the tier outputs for player $p$.
+Let $S_1(p), S_2(p), S_3(p)$ be the tier classifications for player $p$.
 
-#### Consensus Rules:
+#### Consensus Formulation:
 1. **Direct RED Rule:**
    $$\text{FinalTier}(p) = \text{RED} \quad \text{if } S_1(p) = \text{RED} \lor S_2(p) = \text{RED}$$
 
@@ -135,39 +135,27 @@ Let $S_1(p), S_2(p), S_3(p)$ be the tier outputs for player $p$.
 
 ---
 
-## 3. Developer Handover & API Schema
+## 3. Developer Handover & Action Handshake
 
-The orchestrator outputs a structured payload for the game developer's administrative backend:
+CDS returns clean rosters ready for game backend execution:
 
 ```json
 {
-  "timestamp": "2026-10-23T01:50:00Z",
-  "match_id": "BATTLEGROUND_MATCH_8819",
   "summary": {
     "total_players": 100,
-    "green_count": 92,
-    "gray_count": 6,
+    "green_count": 94,
+    "gray_count": 4,
     "red_count": 2
   },
   "rosters": {
-    "GREEN": ["P101", "P105", "..."],
-    "GRAY": ["P103", "P108", "..."],
-    "RED": ["P102", "P104"]
+    "GREEN": ["P1", "P2", "..."],
+    "GRAY": ["P3", "P4", "..."],
+    "RED": ["P5", "P6"]
   },
-  "audit_trail": {
-    "P102": {
-      "final_tier": "RED",
-      "reason": "3_GRAY_PROMOTION",
-      "stage1_status": "GRAY",
-      "stage2_status": "GRAY",
-      "stage3_status": "GRAY",
-      "gray_overlap_count": 3
-    }
-  },
-  "developer_actions": {
-    "GREEN": "Free / Allow normal play. Telemetry archived.",
-    "GRAY": "Monitor / Increase tickrate to 128Hz, record full demo, queue for review.",
-    "RED": "Ban or Quarantine / Immediate disconnect, HWID ban, or route to shadow-lobbies."
+  "developer_handover": {
+    "GREEN": "Free / Allow normal play.",
+    "GRAY": "Monitor / Increase tick sampling rate, record demo, soft trust queue.",
+    "RED": "Ban or Quarantine / Disconnect, HWID ban, or route to shadow-lobbies."
   }
 }
 ```

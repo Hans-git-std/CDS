@@ -1,16 +1,15 @@
 """
 Script to generate the comprehensive Word specification document for the Cheat Detection System (CDS).
-Reflects the 2-Stage Strategic Roadmap and the 4-Stage Processing Architecture:
-  - Stage 1: Passive NLP Detector (Historical Game DB + Cold Start Training Mode)
-  - Stage 2: Active Anomaly Detector (Live Telemetry: speed, height, DPM, micro-aim)
-  - Stage 3: Agentic Profile Inspector (Cheat seller detection on Discord/Telegram)
-  - Stage 4: Central Pipeline Orchestrator (Cross-model Gray routing, 3-Gray -> Red promotion rule)
-  - Developer Handover: Free / Monitor / Ban
+Reflects:
+  - Features decided by developer (feature-agnostic framework)
+  - Powered by TensorFlow Sequential models (Supervised classification & Deep Autoencoders)
+  - 2-Stage Strategic Roadmap: Stage 1 Core Framework, Stage 2 Battleground Implementation
+  - 4-Stage Operational Engine (Passive NLP, Active Anomaly, Profile Agent, Orchestrator)
+  - The 3-GRAY Promotion Rule and Developer Handover
 """
 import os
 import docx
 from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
@@ -28,7 +27,7 @@ def set_cell_margins(cell, top=100, bottom=100, left=140, right=140):
 def create_document(output_path):
     doc = docx.Document()
     
-    # Page setup - 1 inch margins
+    # 1-inch margins
     for section in doc.sections:
         section.top_margin = Inches(1.0)
         section.bottom_margin = Inches(1.0)
@@ -46,7 +45,7 @@ def create_document(output_path):
     normal_style.paragraph_format.line_spacing = 1.15
     normal_style.paragraph_format.space_after = Pt(6)
 
-    # ------------------ COVER / TITLE SECTION ------------------
+    # ------------------ TITLE SECTION ------------------
     title_p = doc.add_paragraph()
     title_p.paragraph_format.space_before = Pt(36)
     title_p.paragraph_format.space_after = Pt(6)
@@ -58,7 +57,7 @@ def create_document(output_path):
 
     subtitle_p = doc.add_paragraph()
     subtitle_p.paragraph_format.space_after = Pt(24)
-    subtitle_run = subtitle_p.add_run("Technical Architecture, Battleground Implementation & Developer Handover")
+    subtitle_run = subtitle_p.add_run("Developer Framework Specification Powered by TensorFlow")
     subtitle_run.font.name = 'Arial'
     subtitle_run.font.size = Pt(13)
     subtitle_run.font.color.rgb = teal_color
@@ -68,12 +67,12 @@ def create_document(output_path):
     meta_table.autofit = False
     
     meta_data = [
-        ("Project:", "Cheat Detection System (CDS)"),
-        ("Strategic Roadmap:", "Stage 1 (Core Analogy Engine) & Stage 2 (Battleground Games)"),
-        ("Internal Architecture:", "4-Stage Triangulation (Passive NLP + Active Telemetry + Profile Agent + Orchestrator)"),
+        ("Framework Name:", "Cheat Detection System (CDS)"),
+        ("Machine Learning Engine:", "TensorFlow 2.x (Sequential Models & Autoencoders)"),
+        ("Feature Philosophy:", "Feature-Agnostic (Decided dynamically by the developer)"),
+        ("Operational Pipeline:", "4-Stage Hybrid (Passive NLP + Active Anomaly + Profile Agent + Orchestrator)"),
         ("Consensus Engine:", "3-GRAY Promotion Rule (3x GRAY ===> RED) & 2-GRAY Retention"),
-        ("Classification Tiers:", "GREEN (Free) | GRAY (Monitor) | RED (Ban / Quarantine)"),
-        ("Document Version:", "2.0.0-PRODUCTION SPECIFICATION (October 2026)")
+        ("Specification Version:", "2.1.0-PRODUCTION (October 2026)")
     ]
     
     for i, (k, v) in enumerate(meta_data):
@@ -123,71 +122,62 @@ def create_document(output_path):
         r.font.color.rgb = teal_color
         return h
 
-    # ------------------ 1. STRATEGIC ROADMAP ------------------
-    add_h1("1. Strategic Product Roadmap")
+    # ------------------ 1. EXECUTIVE OVERVIEW ------------------
+    add_h1("1. Architectural Purpose & Framework Principles")
     p = doc.add_paragraph()
     p.add_run(
-        "The Cheat Detection System (CDS) is engineered across two overarching product stages:\n"
-        "• Stage 1 (Core Analogy Engine — Current Development): The core framework, mathematical models, feature scaling pipelines, NLP tokenization engine, and multi-model consensus logic.\n"
-        "• Stage 2 (Modern Battleground Implementation — Next Step): Tailored integration for 100-player Battle Royale / Battleground games (e.g. PUBG, Warzone, Apex, Free Fire) addressing parachuting, open-world terrain elevation, vehicle dynamics, and long-range ballistic gunplay."
+        "The Cheat Detection System (CDS) is a developer-implemented anti-cheat framework built on TensorFlow. "
+        "It provides game developers with modular, pre-configured neural network architectures to detect unauthorized third-party "
+        "software in modern competitive multiplayer titles (such as Battlegrounds, Battle Royales, and tactical shooters).\n\n"
+        "Key Engineering Axioms:\n"
+        "• Features are Decided by the Developer: CDS does not hardcode features. Every game tracks unique metrics; the developer passes their own custom feature arrays into the detectors.\n"
+        "• TensorFlow Sequential Models: Stage 1 uses a supervised Sequential classifier; Stage 2 uses an unsupervised Sequential Autoencoder.\n"
+        "• Newbie-Friendly Integration: The library exposes clean, high-level methods (.train, .classify, .evaluate_telemetry, .harmonize_rosters) enabling rapid developer onboarding."
     )
 
-    # ------------------ 2. DEVELOPER INTEGRATION WORKFLOW ------------------
-    add_h1("2. Developer End: Integration & Onboarding Flow")
+    # ------------------ 2. THE 4 PROCESSING STAGES ------------------
+    add_h1("2. The 4 Operational Processing Stages")
+
+    add_h2("2.1 Stage 1: Passive Detector (TensorFlow Sequential on Historical DB)")
     p = doc.add_paragraph()
     p.add_run(
-        "Game developers integrate CDS into their production infrastructure through a standardized sequence:\n"
-        "1. Fork Repository & Read Documentation: Developer forks the repository and reviews battleground-implementation.md.\n"
-        "2. Stage 1 Hookup & Cold-Start Training: Developer attaches their game database (Win rate, K/D, Headshot %, DPM), runs feature scaling, and executes training mode with a binary GREEN/RED Answer Key.\n"
-        "3. Stage 2 Hookup: Connects live dedicated server telemetry (speed, height, DPM, live headshots, micro-aim adjustments). Clean players are discarded, reporting only GRAY and RED.\n"
-        "4. Stage 3 Hookup: Connects player profiles and social metadata to the Agentic Profile Inspector to catch cheat sellers advertising on Discord/Telegram. Outputs GREEN/GRAY only.\n"
-        "5. Stage 4 Orchestrator: Balances all models simultaneously, aggregates cross-model GRAY lists, applies the 3-GRAY to RED promotion rule, and delivers final rosters.\n"
-        "6. Developer Handover: Developer frees GREEN players, monitors GRAY players, and bans RED players according to studio policy. CDS holds no responsibility for subsequent moderation decisions."
+        "Connects to the game database to evaluate cumulative player performance stats (e.g. Win rate, K/D, Headshots, DPM).\n"
+        "Cold-Start Training Mode: When initializing CDS, the developer provides an Answer Key containing binary ground-truth: 0 for GREEN (clean players) and 1 for RED (banned cheaters). "
+        "There is no intermediate GRAY in training data. The model learns clean decision boundaries and automatically infers suspicious intermediate GRAY players during live inference.\n"
+        "Output: GREEN, GRAY, and RED rosters."
     )
 
-    # ------------------ 3. THE 4 INTERNAL PROCESSING STAGES ------------------
-    add_h1("3. The 4 Internal Processing Stages of CDS")
-
-    add_h2("3.1 Stage 1: Passive Detector (NLP Method on Game Database)")
+    add_h2("2.2 Stage 2: Active Anomaly Detector (TensorFlow Sequential Autoencoder)")
     p = doc.add_paragraph()
     p.add_run(
-        "The Passive Detector attaches to historical player databases. Numerical features (Win rate, K/D, Total matches, Headshot rate, DPM) are scaled and serialized into NLP feature tokens.\n"
-        "Cold-Start Training Mode: When initialized for the first time, the developer supplies an Answer Key of known GREEN and RED accounts. Ground truth has no intermediate GRAY—this establishes clean decision boundaries, allowing the model to accurately infer suspicious intermediate GRAY players during live operation.\n"
-        "Output: Tri-state roster of GREEN, GRAY, and RED."
+        "Evaluates real-time in-game telemetry streamed from dedicated game servers (e.g. movement speed, player height, active combat bursts, aim-snap deltas).\n"
+        "Deep Autoencoder Architecture: Trained on normal, legitimate gameplay telemetry to reconstruct natural movement patterns. "
+        "High reconstruction error (MSE) indicates an active kinematic cheat.\n"
+        "Resource Optimization: Clean players (GREEN) have low reconstruction error and are automatically discarded immediately from reporting, cutting server CPU and memory usage by over 85%. "
+        "Only GRAY and RED are reported. Runs independently from Stage 1."
     )
 
-    add_h2("3.2 Stage 2: Active Detector (Real-Time In-Game Anomaly)")
+    add_h2("2.3 Stage 3: Agentic Profile Inspector (Cheat Seller Intelligence)")
     p = doc.add_paragraph()
     p.add_run(
-        "Running concurrently and independently during live matches, Stage 2 processes streaming telemetry:\n"
-        "• Movement Speed: Detects speed hacks exceeding natural sprint thresholds.\n"
-        "• Player Height / Elevation: Detects fly hacks and vertical teleportation.\n"
-        "• Damage Per Minute (DPM) & Live K/D: Flags impossible single-match burst combat.\n"
-        "• Micro-Aim Snapping: Detects non-biological aimbot micro-adjustments.\n"
-        "Resource Optimization: Clean players (GREEN) are immediately discarded from alerting to reduce server tick overhead. Only GRAY and RED are reported."
+        "Aggressive cheat distributors monetize hacks by putting contact info (Discord handles, Telegram invite links, WhatsApp, 'DM for hacks') directly in their profile bio, username, or clan tag.\n"
+        "Stage 3 inspects profile metadata and uses agentic pattern evaluation to detect seller channels.\n"
+        "Safety Invariant: A profile text string alone cannot definitively prove active in-game cheating. Therefore, Stage 3 outputs ONLY GREEN or GRAY (never RED)."
     )
 
-    add_h2("3.3 Stage 3: External Verification (Agentic Profile Inspector)")
+    add_h2("2.4 Stage 4: Central Pipeline Orchestrator & Consensus Engine")
     p = doc.add_paragraph()
     p.add_run(
-        "Many aggressive cheaters monetize their hacks by placing contact details in their profile bio, nickname, or clan tag (e.g. 'DM for undetected VIP hack DC: seller#123', 'Telegram: t.me/ez_cheats').\n"
-        "Stage 3 extracts profile metadata and uses LLM agentic heuristics to detect cheat-seller language and external communication handles.\n"
-        "Safety Invariant: Because profile text alone cannot prove active in-game cheating, Stage 3 outputs ONLY GREEN or GRAY (never RED directly)."
+        "Stage 4 runs all models simultaneously and balances their workload. Its primary role is cross-evaluating the GRAY lists:\n"
+        "• Direct RED Rule: Any direct RED from Stage 1 or Stage 2 leads to immediate RED classification.\n"
+        "• The 3-GRAY Promotion Rule: If a player is marked as GRAY across ALL THREE models (Stage 1, Stage 2, and Stage 3), Stage 4 automatically promotes them to RED.\n"
+        "• The 2-GRAY Retention Rule: If marked as GRAY in only 1 or 2 models, they are kept in GRAY (retained in the monitor queue).\n"
+        "• Clean Rule: Nominal players remain GREEN."
     )
 
-    add_h2("3.4 Stage 4: Central Pipeline Orchestrator & Consensus Engine")
-    p = doc.add_paragraph()
-    p.add_run(
-        "Stage 4 manages simultaneous model execution, routes data streams, and enforces the cross-model consensus rules:\n"
-        "• Direct RED Rule: Any direct RED from Stage 1 or Stage 2 results in immediate RED classification.\n"
-        "• The 3-GRAY Promotion Rule: If a player is flagged as GRAY across ALL THREE models (Stage 1 Passive, Stage 2 Active, AND Stage 3 Profile), Stage 4 automatically promotes them to RED.\n"
-        "• The 2-GRAY Retention Rule: If a player is flagged as GRAY in only 1 or 2 models, they are kept in GRAY for elevated monitoring.\n"
-        "• Nominal Rule: Players clean across models remain GREEN."
-    )
+    # ------------------ 3. CONSENSUS MATRIX ------------------
+    add_h1("3. Consensus Matrix & Promotion Rules")
 
-    # ------------------ 4. CONSENSUS MATRIX TABLE ------------------
-    add_h1("4. Stage 4 Consensus Matrix")
-    
     matrix_table = doc.add_table(rows=6, cols=4)
     matrix_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     matrix_table.autofit = False
@@ -203,11 +193,11 @@ def create_document(output_path):
         r.font.size = Pt(9.5)
 
     matrix_data = [
-        ("RED", "Any", "Any", "RED (Instant Flag from DB)"),
-        ("Any", "RED", "Any", "RED (Instant Flag from Telemetry)"),
+        ("RED", "Any", "Any", "RED (Direct Red Flag from DB)"),
+        ("Any", "RED", "Any", "RED (Direct Red Flag from Live Telemetry)"),
         ("GRAY", "GRAY", "GRAY", "RED (Promoted: 3-Gray Consensus)"),
-        ("GRAY", "GRAY", "GREEN", "GRAY (Retained: 2-Gray Flag)"),
-        ("GREEN", "GREEN", "GREEN", "GREEN (Clean Baseline)")
+        ("GRAY", "GRAY", "GREEN", "GRAY (Retained in Monitor Queue)"),
+        ("GREEN", "GREEN", "GREEN", "GREEN (Verified Clean Baseline)")
     ]
 
     widths = [Inches(1.6), Inches(1.8), Inches(1.6), Inches(1.8)]
@@ -223,15 +213,15 @@ def create_document(output_path):
 
     doc.add_paragraph().paragraph_format.space_before = Pt(12)
 
-    # ------------------ 5. DEVELOPER RESPONSIBILITY HANDOVER ------------------
-    add_h1("5. Developer Responsibility & Enforcement Handover")
+    # ------------------ 4. DEVELOPER HANDOVER ------------------
+    add_h1("4. Developer Handover & Enforcement Responsibility")
     p = doc.add_paragraph()
     p.add_run(
-        "CDS delivers intelligence and classification. Policy enforcement is strictly executed by the game studio:\n"
-        "• GREEN: Free players to engage in normal matchmaking. Standard low-frequency telemetry.\n"
-        "• GRAY: Apply game-specific monitoring: increase server tickrate to 128Hz, record full demo replay, or place in soft trust-factor matchmaking.\n"
-        "• RED: Execute disciplinary actions: instant match disconnect, account/HWID ban, damage nullification, or routing to shadow-lobbies (cheaters vs. cheaters).\n\n"
-        "CDS accepts no liability or responsibility for developer enforcement penalties or ban disputes."
+        "CDS delivers intelligence and threat categorization. Administrative policy enforcement is executed solely by the game studio:\n"
+        "• GREEN: Developer frees the player to continue standard matchmaking.\n"
+        "• GRAY: Developer monitors the player (e.g. increase server tickrate to 128Hz, record full demo replay, or place in soft trust-factor matchmaking).\n"
+        "• RED: Developer executes disciplinary actions (instant match disconnect, HWID/account ban, or silent quarantine into shadow-lobbies).\n\n"
+        "CDS accepts no liability or responsibility for game studio moderation decisions after delivering the classified rosters."
     )
 
     doc.save(output_path)

@@ -1,202 +1,196 @@
 # 🛡️ CDS: Cheat Detection System
 
 <p align="center">
-  <img src="https://img.shields.io/badge/System-Cheat_Detection_System_(CDS)-0F2942?style=for-the-badge&logo=shield&logoColor=white" alt="CDS System" />
-  <img src="https://img.shields.io/badge/Roadmap-Phase_1_(Core)_%2B_Phase_2_(Battleground)-0284C7?style=for-the-badge" alt="Roadmap" />
-  <img src="https://img.shields.io/badge/Status-Active_Development-10B981?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Framework-Cheat_Detection_System_(CDS)-0F2942?style=for-the-badge&logo=shield&logoColor=white" alt="CDS System" />
+  <img src="https://img.shields.io/badge/ML_Engine-TensorFlow_2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" alt="TensorFlow" />
+  <img src="https://img.shields.io/badge/Status-Developer_Framework-10B981?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/License-Proprietary_(View--Only)-E11D48?style=for-the-badge" alt="License" />
 </p>
 
 <p align="center">
-  <strong>Next-Generation Behavioral & Multi-Modal Anti-Cheat Engine for Competitive Online Games</strong><br>
-  <em>Designed for Modern Battleground titles (e.g. PUBG, Warzone, Apex, Free Fire) using Passive NLP, Active Telemetry Anomaly, and Agentic Profile Intelligence.</em>
+  <strong>A Developer-Implemented Multi-Stage Anti-Cheat Framework Powered by TensorFlow</strong><br>
+  <em>Designed for modern multiplayer titles (e.g. Battlegrounds, Battle Royales, competitive shooters) using Passive NLP, Active Telemetry Autoencoders, and Agentic Profile Intelligence.</em>
 </p>
 
 ---
 
-## 📑 Table of Contents
+## 📌 Core Architecture Principles
 
-- [Strategic Product Roadmap](#-strategic-product-roadmap)
-- [How CDS Works: The 4 Internal Processing Stages](#-how-cds-works-the-4-internal-processing-stages)
-  - [Stage 1: Passive Detector (NLP on Game Database)](#stage-1-passive-detector-nlp-method-on-game-db)
-  - [Stage 2: Active Detector (Real-Time In-Game Anomaly)](#stage-2-active-detector-real-time-anomaly)
-  - [Stage 3: External Verification (Agentic Profile Inspector)](#stage-3-agentic-profile-inspector-seller-intelligence)
-  - [Stage 4: Pipeline Orchestrator & Consensus Engine](#stage-4-central-pipeline-orchestrator--consensus-engine)
-- [Developer Onboarding & Workflow](#-developer-onboarding--integration-workflow)
-- [End-to-End Architecture Diagram](#-end-to-end-architecture-diagram)
-- [The Consensus & Promotion Rules](#-the-consensus--promotion-rules)
-- [Developer Responsibility & Enforcement Handover](#-developer-responsibility--enforcement-handover)
-- [Repository Structure](#-repository-structure)
-- [Running the Simulation](#-running-the-simulation)
-- [License & Restrictions](#-license--restrictions)
+1. **Features are Decided by the Developer (YOU), Not by Us:**  
+   CDS is completely feature-agnostic. Whether your game tracks 4 features or 40 features, the models dynamically adapt to your input dimensions. We guide you on feature selection, but you retain full control over your telemetry.
+2. **Powered by TensorFlow:**  
+   Uses standard `tf.keras.Sequential` architectures for both supervised historical feature classification and unsupervised real-time anomaly detection.
+3. **Designed for Easy Implementation:**  
+   Even a beginner or junior developer can integrate CDS into their game in a single afternoon.
 
 ---
 
-## 🗺️ Strategic Product Roadmap
+## 🗺️ The 2-Stage Strategic Roadmap
 
-CDS is developed across two distinct macro stages:
-1. **Stage 1 (Core Analogy & Engine — *Current Development*):**  
-   The mathematical models, feature scaling pipelines, NLP tokenization engine, and multi-model consensus logic.
-2. **Stage 2 (Production Battleground Implementation — *Next Step*):**  
-   Targeted integration and deployment reference for **modern online Battleground games** (e.g., 100-player Battle Royale matches with parachuting, terrain elevation, vehicular movement, and long-range ballistic gunplay).
+* **Stage 1 (Core Analogy & Engine — *Current Development*):**  
+  The core open framework: TensorFlow Sequential models, Autoencoder reconstruction error math, profile inspection heuristics, and multi-model consensus logic.
+* **Stage 2 (Battleground Implementation — *Next Step*):**  
+  Integration reference for **Modern Online Battleground titles** (e.g., 100-player Battle Royale games) covering parachuting elevation, vehicle velocities, and high-tick gunplay kinematics. See [**`battleground-implementation.md`**](battleground-implementation.md).
 
 ---
 
-## ⚙️ How CDS Works: The 4 Internal Processing Stages
-
-When integrated into a game, CDS runs four coordinated stages:
+## ⚙️ How the 4 Internal Stages Work
 
 ```
-+--------------------------------------------------------------------------------------------------+
-|                                    CDS 4-STAGE SYSTEM PIPELINE                                   |
-+--------------------------+--------------------------+--------------------------------------------+
-| STAGE 1: PASSIVE NLP     | STAGE 2: ACTIVE ANOMALY  | STAGE 3: AGENTIC PROFILE                   |
-| (Game DB Historical)     | (Live In-Match Stream)   | (Cheat Seller Intelligence)                |
-| • Win rate, K/D ratio    | • Movement speed, Height | • Profile Bio, Nickname, Clan tag          |
-| • Headshot %, DPM        | • Live DPM, In-game K/D  | • Detects Telegram / Discord seller links  |
-| • Training Mode (Ans Key)| • Micro aim-snap checks  | • Outputs: GREEN / GRAY only               |
-| • Outputs: GRN/GRY/RED   | • Outputs: GRAY / RED    |   (Profiles alone cannot be definitely RED)|
-+--------------------------+--------------------------+--------------------------------------------+
++---------------------------------------------------------------------------------------------------+
+|                                     CDS 4-STAGE ARCHITECTURE                                      |
++--------------------------+---------------------------+--------------------------------------------+
+| STAGE 1: PASSIVE NLP     | STAGE 2: ACTIVE ANOMALY   | STAGE 3: PROFILE AGENT                     |
+| (Game Database Stats)    | (Live Match Telemetry)    | (Cheat Seller Intelligence)                |
+| • TensorFlow Sequential  | • TensorFlow Autoencoder  | • Profile Bio, Nickname, Clan Tags         |
+| • Trained with Answer Key| • Evaluates live in-game  | • Scans for Discord / Telegram seller tags |
+|   (GREEN=0, RED=1 only)  |   telemetry               | • Outputs: GREEN / GRAY only               |
+| • Outputs: GRN / GRY / RED| • Drops GREEN early      |   (Profiles alone cannot be definitely RED)|
+|                          | • Outputs: GRAY / RED     |                                            |
++--------------------------+---------------------------+--------------------------------------------+
                                           |
                                           v
-+--------------------------------------------------------------------------------------------------+
-|                      STAGE 4: CENTRAL PIPELINE ORCHESTRATOR & CONSENSUS ENGINE                   |
-| • Runs all 3 models simultaneously and balances compute resources.                               |
-| • Collects and cross-routes the GRAY list across models.                                         |
-| • 3-GRAY Promotion Rule: Flagged as GRAY in ALL 3 models  ===> Promoted to RED!                  |
-| • 2-GRAY Retention Rule: Flagged as GRAY in only 1 or 2   ===> Kept in GRAY for monitoring.      |
-+--------------------------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------+
+|                      STAGE 4: CENTRAL PIPELINE ORCHESTRATOR & CONSENSUS ENGINE                    |
+| • Runs all 3 models simultaneously and balances compute resources.                                |
+| • Routes the GRAY lists across models to decide final promotions.                                 |
+| • 3-GRAY Promotion Rule: Flagged as GRAY across ALL 3 models  ===> Promoted to RED!               |
+| • 2-GRAY Retention Rule: Flagged as GRAY in only 1 or 2       ===> Retained in GRAY (Monitor).    |
++---------------------------------------------------------------------------------------------------+
                                           |
                                           v
-                      [ Final GREEN / GRAY / RED Rosters Dispatched to Dev ]
+                 [ Developer Handover: Free (Green) | Monitor (Gray) | Ban (Red) ]
 ```
 
-### Stage 1: Passive Detector (NLP Method on Game DB)
-* **Data Source:** Connects directly to the historical Game Database.
-* **Feature Scaling:** Preprocesses and scales historical Battleground metrics: **Win Rate, K/D Ratio, Total Matches/Kills, Headshot Rate, Damage Per Match (DPM), and Account Age**.
-* **NLP Representation:** Encodes normalized numerical features into structured semantic tokens, allowing language classification heads to detect unnatural stat combinations.
-* **First-Time Cold-Start / Training Mode:**  
-  When initializing the repository for the first time, the game developer runs Stage 1 in **Training Mode** providing a ground-truth **Answer Key** containing only **GREEN** (known clean players) and **RED** (confirmed banned cheaters). In ground-truth training, there is no mid-tier GRAY—this teaches the NLP model where legitimate performance ends and hacking begins, allowing it to accurately flag suspicious intermediate **GRAY** players during live inference.
-* **Output:** Returns three rosters: `GREEN`, `GRAY`, and `RED`.
+### Stage 1: Passive Detector (TensorFlow Sequential)
+* **Data Source:** Historical game database (Win rate, KD, Headshots, Matches, etc. — chosen by you).
+* **Cold-Start Training Mode:** When first setting up the repo, the developer supplies an **Answer Key** containing known **GREEN** (clean players) and **RED** (banned cheaters). In ground truth training, there is **no intermediate GRAY**—the model learns the clean boundary and infers suspicious **GRAY** players during live inference.
+* **Output:** Tri-state roster: `GREEN`, `GRAY`, `RED`.
 
-### Stage 2: Active Detector (Real-Time Anomaly)
-* **Data Source:** Dedicated game server real-time telemetry stream.
-* **Metrics:** Live match state:
-  * `movement_speed`: Detects speed-hack multipliers.
-  * `player_height`: Detects fly-hacks and vertical teleportation.
-  * `damage_per_minute (DPM)`: Real-time damage bursts.
-  * `active_kd` & `active_headshot_rate`: Unnatural single-match killing sprees.
-  * `micro_aim_delta`: Algorithmic snaps and inhuman aim micro-adjustments.
-* **Filtering:** Automatically discards clean players (`GREEN`) to conserve CPU tick time, and alerts only on `GRAY` (suspicious) and `RED` (blatant physical impossibilities).
-* **Operation:** Runs independently from Stage 1.
+### Stage 2: Active Detector (TensorFlow Autoencoder)
+* **Data Source:** Real-time live match telemetry (Speed, elevation/height, live DPM, aim-snap deltas — chosen by you).
+* **Deep Autoencoder:** Trained on legitimate clean gameplay to reconstruct natural movement. High reconstruction error indicates an active kinematic cheat.
+* **Resource Optimization:** Clean players (**GREEN**) are **automatically removed and discarded immediately** to save server CPU. Reports only `GRAY` and `RED`.
+* **Independence:** Runs concurrently and independently from Stage 1.
 
 ### Stage 3: Agentic Profile Inspector (Seller Intelligence)
-* **The Insight:** High-tier cheat distributors often use their in-game player ID, nickname, clan tag, and bio status to advertise and sell their cheat scripts, private configs, and software (e.g. `"DM for undetected VIP hack DC: seller#123"`, `"Tele: t.me/ez_win_cheats"`).
-* **Mechanism:** Pulls profile data from the database and runs an LLM agentic classifier to detect commercial contact handles and cheat seller language.
-* **Safety Boundary:** A player's bio text alone **cannot definitively prove active in-game cheating**. Therefore, Stage 3 outputs **ONLY GREEN or GRAY** (never RED).
+* **The Insight:** Many cheat users advertise and sell their private hack scripts, mod menus, or configs by putting contact info (Discord, Telegram, WhatsApp) in their profile bio or username.
+* **Inspection:** Scans profile metadata for commercial seller patterns and communication handles.
+* **Safety Invariant:** A profile text alone **cannot prove active cheating**. Therefore, Stage 3 outputs **ONLY GREEN or GRAY** (never RED).
 
 ### Stage 4: Central Pipeline Orchestrator & Consensus Engine
-* Coordinates and balances all models simultaneously.
-* Manages data pipelines and aggregates lists.
-* Implements the **Cross-Model GRAY Routing**:
-  * Puts the GRAY list from one model into the context of the other two models.
-  * **The 3-GRAY Promotion Rule:** If a player is flagged as **GRAY across ALL 3 models** (Stage 1, Stage 2, and Stage 3), Stage 4 **promotes them to RED**!
-  * **The 2-GRAY Retention Rule:** If a player is flagged as **GRAY in only 1 or 2 models**, they **remain in GRAY** (retained for high-tick monitoring).
-  * Direct REDs from Stage 1 or Stage 2 remain **RED**.
+* Coordinates all 3 models simultaneously.
+* **The 3-GRAY Promotion Rule:** If a player is marked as **GRAY across ALL THREE models**, Stage 4 **automatically promotes them to RED**!
+* **The 2-GRAY Retention Rule:** If marked as **GRAY in only 1 or 2 models**, they **remain in GRAY** (monitor queue).
+* Direct REDs from Stage 1 or Stage 2 remain **RED**.
 
 ---
 
-## 👩‍💻 Developer Onboarding & Integration Workflow
+## ⚖️ The Consensus Matrix
 
-Game developers integrate CDS into their production infrastructure through a simple 5-step process detailed in [**`battleground-implementation.md`**](battleground-implementation.md):
-
-```mermaid
-flowchart TD
-    DEV["1. Developer forks repo & reads battleground-implementation.md"] --> S1_INIT["2. Stage 1 Init: Attach Game DB & Run Training Mode with Answer Key"]
-    S1_INIT --> S2_INIT["3. Stage 2 Init: Connect Real-Time Match Server Telemetry"]
-    S2_INIT --> S3_INIT["4. Stage 3 Init: Connect User Profile & Bio Metadata"]
-    S3_INIT --> S4_RUN["5. Stage 4 Orchestrator: Run All Models Simultaneously"]
-    S4_RUN --> ROSTERS["Output: GREEN, GRAY, and RED Rosters"]
-    ROSTERS --> HANDOVER["Developer Handover: Free / Monitor / Ban"]
-```
-
----
-
-## ⚖️ The Consensus & Promotion Rules
-
-| Stage 1 (Passive DB) | Stage 2 (Active Telemetry) | Stage 3 (Profile Bio) | Final Consensus Tier | System Action & Explanation |
+| Stage 1 (Passive DB) | Stage 2 (Active Telemetry) | Stage 3 (Profile Bio) | Final Resolution | Action & Explanation |
 | :---: | :---: | :---: | :---: | :--- |
-| **RED** | *Any* | *Any* | 🟥 **RED** | **Direct Red Flag:** Flagged by historical DB analysis. |
-| *Any* | **RED** | *Any* | 🟥 **RED** | **Direct Red Flag:** Blatant physical speed/aim/height violation in live match. |
-| **GRAY** | **GRAY** | **GRAY** | 🟥 **RED** | **3-Gray Promotion:** Suspicious across all 3 independent vectors. Promoted to RED! |
-| **GRAY** | **GRAY** | **GREEN** | 🟨 **GRAY** | **2-Gray Retention:** 2 flags present. Retained in high-priority monitor queue. |
+| **RED** | *Any* | *Any* | 🟥 **RED** | **Direct Red Flag:** Flagged by historical DB statistics. |
+| *Any* | **RED** | *Any* | 🟥 **RED** | **Direct Red Flag:** Impossible speed/elevation/aim in live match. |
+| **GRAY** | **GRAY** | **GRAY** | 🟥 **RED** | **3-Gray Promotion:** Flagged across all 3 independent vectors $\rightarrow$ **Promoted to RED**! |
+| **GRAY** | **GRAY** | **GREEN** | 🟨 **GRAY** | **2-Gray Retention:** 2 flags present $\rightarrow$ Retained in monitor queue. |
 | **GRAY** | **GREEN** | **GRAY** | 🟨 **GRAY** | **2-Gray Retention:** Retained in monitor queue. |
-| **GREEN** | **GRAY** | **GREEN** | 🟨 **GRAY** | **1-Gray Retention:** Single anomaly spike. Retained in soft-watch list. |
+| **GREEN** | **GRAY** | **GREEN** | 🟨 **GRAY** | **1-Gray Retention:** Single anomaly $\rightarrow$ Retained in soft watch. |
 | **GREEN** | **GREEN** | **GREEN** | 🟩 **GREEN** | **Nominal Baseline:** Verified clean player. |
 
 ---
 
-## 🛡️ Developer Responsibility & Enforcement Handover
+## 💡 Feature Selection Guide for Developers
 
-CDS establishes a clear, professional boundary between **threat classification** and **studio policy enforcement**:
+You decide which features to pass into the detectors! Here are recommended types of features:
 
+| Detector Stage | Recommended Feature Types (Examples) | How to Prepare |
+| :--- | :--- | :--- |
+| **Stage 1 (Passive DB)** | Cumulative Win Rate, Lifetime K/D, Headshot %, Damage per match, Account age | Scale numerical features to approximately $[0.0, 1.0]$. |
+| **Stage 2 (Active Telemetry)** | Horizontal movement speed, vertical height delta, real-time DPM, angular aim jerk | Normalize tick values relative to maximum natural sprint/aim limits. |
+| **Stage 3 (Profile Agent)** | Profile status bio, custom nickname, clan tag | Raw text strings from user profile table. |
+
+---
+
+## ⚡ Quickstart Example (Python)
+
+```python
+from cds import PassiveNLPDetector, ActiveAnomalyDetector, AgenticProfileInspector, PipelineOrchestrator
+import numpy as np
+
+# 1. Initialize models
+stage1 = PassiveNLPDetector()
+stage2 = ActiveAnomalyDetector()
+stage3 = AgenticProfileInspector()
+orchestrator = PipelineOrchestrator(stage1, stage2, stage3)
+
+# 2. Train Stage 1 with your Ground-Truth Answer Key (0=GREEN, 1=RED)
+X_db_train = np.array([[0.05, 0.10], [0.08, 0.12], [0.92, 0.95]], dtype=np.float32)
+y_db_train = np.array([0, 0, 1], dtype=np.float32)
+stage1.train(X_db_train, y_db_train, epochs=20)
+
+# 3. Train Stage 2 Autoencoder on clean gameplay telemetry
+X_clean_telem = np.array([[0.20, 0.15], [0.25, 0.18]], dtype=np.float32)
+stage2.train_baseline(X_clean_telem, epochs=20)
+
+# 4. Run full orchestrator on active players
+final_results = orchestrator.harmonize_rosters(
+    all_player_ids=["P101", "P102"],
+    stage1_rosters={"GREEN": ["P101"], "GRAY": ["P102"], "RED": []},
+    stage2_rosters={"GRAY": ["P102"], "RED": []},
+    stage3_rosters={"GREEN": ["P101"], "GRAY": ["P102"]},
+)
+
+# P102 was GRAY in all 3 models -> Automatically promoted to RED!
+print("RED Banned Players:", final_results["rosters"]["RED"])
 ```
-+------------------------------------+          +------------------------------------+
-|             CDS ENGINE             |          |       DEVELOPER GAME BACKEND       |
-|                                    |          |                                    |
-| [ GREEN ] ---> Verified Clean      |  =====>  | Action: FREE (Normal Matchmaking)  |
-| [ GRAY  ] ---> Suspicious / Border |  =====>  | Action: MONITOR (High-Tick Watch)  |
-| [ RED   ] ---> Confirmed Cheater   |  =====>  | Action: BAN / SHADOW-LOBBY         |
-+------------------------------------+          +------------------------------------+
-       ^ Analytical Responsibility                     ^ Enforcement Responsibility
-```
 
-* **GREEN List:** The developer frees the player to continue standard matchmaking.
-* **GRAY List:** The developer increases telemetry tick sampling (e.g. from 20Hz to 128Hz), saves full demo replays, or routes them to soft trust-factor queues.
-* **RED List:** The developer takes disciplinary action (instant match disconnect, HWID/account ban, damage nullification, or silent shadow-banning into cheater-only lobbies).
+---
+
+## 🛡️ Developer Handover & Enforcement Policy
+
+CDS handles **threat detection and categorization**. The game developer executes moderation actions according to studio policy:
+
+* **GREEN List:** The developer frees the player for normal matchmaking.
+* **GRAY List:** The developer monitors the player (e.g. increase server tickrate to 128Hz, record full match demo, soft trust queue).
+* **RED List:** The developer applies disciplinary actions (instant match disconnect, HWID/account ban, damage nullification, or shadow-lobbies).
 * **Disclaimer:** CDS holds no liability or responsibility for game studio moderation decisions after delivering the classified rosters.
 
 ---
 
-## 📂 Repository Structure
+## 📂 Repository Layout
 
 ```
 CDS/
-├── README.md                                  # Designer project overview (You are here)
-├── battleground-implementation.md             # Developer integration guide for Battleground games
+├── README.md                                  # Designer overview & quickstart (You are here)
+├── battleground-implementation.md             # Beginner-friendly integration tutorial
 ├── LICENSE                                    # Proprietary View-Only Evaluation License
 ├── Cheat_Detection_System_Specification.docx  # Full Microsoft Word engineering specification
-├── generate_docs.py                          # Docx generation engine
-├── src/                                       # Working Python reference implementation
+├── generate_docs.py                          # Script to regenerate Word document
+├── cds/                                       # Core Python package
 │   ├── __init__.py                            # Package exports
-│   ├── stage1_passive_nlp.py                  # Stage 1: DB feature scaling & NLP model
-│   ├── stage2_active_anomaly.py               # Stage 2: Real-time telemetry anomaly detector
-│   ├── stage3_agentic_profile.py              # Stage 3: Profile & cheat-seller inspector
-│   ├── stage4_orchestrator.py                 # Stage 4: Orchestrator & 3-Gray consensus engine
-│   └── run_pipeline_example.py                # End-to-end runnable simulation
+│   ├── passive_nlp.py                         # Stage 1: TensorFlow Sequential DB model
+│   ├── active_anomaly.py                      # Stage 2: TensorFlow Autoencoder telemetry model
+│   ├── agentic_profile.py                     # Stage 3: Profile & cheat-seller inspector
+│   └── orchestrator.py                        # Stage 4: Orchestrator & 3-Gray consensus engine
+├── examples/
+│   └── quickstart_tutorial.py                 # Full beginner-friendly tutorial simulation
 ├── docs/
-│   ├── ARCHITECTURE.md                        # Technical subsystem & mathematical formulations
+│   ├── ARCHITECTURE.md                        # Technical subsystem & TensorFlow architecture
 │   └── ANALYSIS_AND_IMPROVEMENTS.md           # Engineering analysis, gaps & recommendations
 └── .gitignore                                 # Git ignore configuration
 ```
 
 ---
 
-## 🧪 Running the Simulation
+## 🧪 Run the Tutorial Locally
 
-You can execute the complete 4-stage pipeline simulation locally:
+Run the complete 4-stage tutorial simulation with TensorFlow:
 
 ```powershell
-cd D:\Project\CDS\src
-uv run python run_pipeline_example.py
+cd D:\Project\CDS\examples
+uv run --with tensorflow python quickstart_tutorial.py
 ```
-
-This simulates:
-1. First-time training mode calibration with ground truth answer key.
-2. Ingesting DB stats for Battleground players.
-3. Processing real-time speed, height, and aim telemetry.
-4. Inspecting profile bios for Discord/Telegram cheat seller patterns.
-5. Executing the 3-GRAY to RED promotion rule and producing the final developer dispatch.
 
 ---
 
