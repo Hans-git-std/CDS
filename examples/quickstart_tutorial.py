@@ -1,10 +1,11 @@
 """
 CDS (Cheat Detection System) - Developer Quickstart & Integration Tutorial
 ===========================================================================
-This tutorial guides game developers through implementing the 4-Stage CDS framework.
-
-NOTE: All developer-configurable and game-specific sections are clearly marked
-between $$$ info $$$ markers so you know exactly where to plug in your game data!
+This tutorial guides game developers through implementing the 4-Stage CDS framework:
+  - Stage 1: Passive NLP Detector (Historical database stats, 5-layer TensorFlow Sequential)
+  - Stage 2: Active Anomaly Detector (Live match telemetry, TensorFlow Deep Autoencoder)
+  - Stage 3: Agentic Profile Inspector (Database seller intelligence, GREEN/GRAY invariant)
+  - Stage 4: Central Pipeline Orchestrator (Multi-model consensus, 3-GRAY promotion, callbacks)
 """
 
 import sys
@@ -30,13 +31,13 @@ def main():
     # =========================================================================
     # STEP 1: STAGE 1 (PASSIVE NLP DETECTOR - HISTORICAL GAME DATABASE)
     # =========================================================================
-    # $$$ [YOUR_CHOSEN_DATABASE_FEATURES: Win Rate, KD Ratio, Headshot %, DPM] $$$
+    # Features chosen by developer: e.g. [Win Rate, KD Ratio, Headshot %, DPM]
     # CDS is feature-agnostic: choose whichever columns/stats exist in your game database!
     print("\n[Step 1] Initializing Stage 1 Passive NLP Detector (TensorFlow Sequential)...")
     stage1 = PassiveNLPDetector(auto_scale=True)
 
-    # $$$ [YOUR_GAME_DATABASE_GROUND_TRUTH_ANSWER_KEY: 0=GREEN (Clean), 1=RED (Banned)] $$$
-    # First-time training mode: supply verified clean players (0) and confirmed banned cheaters (1).
+    # Ground truth Answer Key for first-time training:
+    # Supply verified clean players (0) and confirmed banned cheaters (1).
     # NOTE: There is NO intermediate GRAY in training ground truth!
     clean_history = [
         [0.05, 0.08, 0.12, 0.15],
@@ -52,7 +53,7 @@ def main():
         [0.95, 0.98, 0.92, 0.90],
     ]
 
-    # $$$ [ATTACH_YOUR_GAME_DATABASE_TRAINING_RECORDS_HERE] $$$
+    # Combine into training arrays
     X_db_train = np.array(clean_history + banned_history, dtype=np.float32)
     y_db_train = np.array([0] * len(clean_history) + [1] * len(banned_history), dtype=np.float32)
 
@@ -63,12 +64,11 @@ def main():
     # =========================================================================
     # STEP 2: STAGE 2 (ACTIVE ANOMALY DETECTOR - REAL-TIME LIVE TELEMETRY)
     # =========================================================================
-    # $$$ [YOUR_LIVE_TELEMETRY_FEATURES: Speed, Height, Combat Burst, Aim Delta] $$$
+    # Features chosen by developer: e.g. [Speed, Height, Combat Burst, Aim Delta]
     # Select whichever real-time telemetry variables your game server generates.
     print("\n[Step 2] Initializing Stage 2 Active Anomaly Detector (TensorFlow Autoencoder)...")
     stage2 = ActiveAnomalyDetector(auto_scale=True)
 
-    # $$$ [YOUR_NORMAL_CLEAN_GAMEPLAY_TELEMETRY_DATA] $$$
     # Train the Autoencoder on normal player movement ticks so it learns clean human physics.
     X_clean_telemetry = np.array([
         [0.25, 0.10, 0.20, 0.15],
@@ -76,6 +76,9 @@ def main():
         [0.22, 0.08, 0.18, 0.12],
         [0.28, 0.14, 0.22, 0.16],
         [0.35, 0.15, 0.30, 0.20],
+        [0.24, 0.09, 0.19, 0.14],
+        [0.29, 0.13, 0.23, 0.17],
+        [0.26, 0.11, 0.21, 0.15],
     ], dtype=np.float32)
 
     print("  -> Training Stage 2 Autoencoder on clean gameplay baseline...")
@@ -86,7 +89,6 @@ def main():
     # STEP 3: STAGE 3 (AGENTIC PROFILE INSPECTOR - SELLER PATTERNS)
     # =========================================================================
     print("\n[Step 3] Initializing Stage 3 Agentic Profile Inspector...")
-    # $$$ [OPTIONAL: YOUR_CUSTOM_CHEAT_SELLER_KEYWORDS] $$$
     stage3 = AgenticProfileInspector()
     print("  -> Ready to inspect profile text for cheat seller contact handles.")
 
@@ -95,13 +97,11 @@ def main():
     # =========================================================================
     print("\n[Step 4] Running Stage 4 Orchestrator on Active Match Players...")
 
-    # $$$ [ATTACH_YOUR_STUDIO_MODERATION_CALLBACKS] $$$
+    # Attach studio moderation callbacks
     def on_player_banned(player_id, audit_info):
-        # $$$ [STUDIO_DISCONNECT_AND_HWID_BAN_API_CALL] $$$
         print(f"  [STUDIO ENFORCEMENT ACTION] Banning {player_id}: {audit_info['reason']}")
 
     def on_player_monitored(player_id, audit_info):
-        # $$$ [STUDIO_INCREASE_TICK_RATE_SAMPLING_AND_RECORD_DEMO_API] $$$
         print(f"  [STUDIO ENFORCEMENT ACTION] Monitoring {player_id}: Sampling increased to 128Hz.")
 
     orchestrator = PipelineOrchestrator(
@@ -112,7 +112,6 @@ def main():
         on_red_action=on_player_banned,
     )
 
-    # $$$ [YOUR_ACTIVE_MATCH_PLAYER_IDS] $$$
     player_ids = [
         "Player_A_Clean",
         "Player_B_Borderline",
@@ -120,23 +119,23 @@ def main():
         "Player_D_Speedhacker",
     ]
 
-    # $$$ [YOUR_PLAYERS_HISTORICAL_DB_STATS] $$$
+    # Historical DB stats queried from game database
     X_live_db = np.array([
-        [0.02, 0.04, 0.07, 0.09],  # Player A: Very clean baseline -> GREEN (<0.35)
-        [0.04, 0.06, 0.08, 0.10],  # Player B: Clean history -> GREEN (<0.35)
-        [0.45, 0.48, 0.45, 0.42],  # Player C: Suspicious history -> GRAY [0.35 - 0.75]
-        [0.90, 0.95, 0.92, 0.88],  # Player D: Blatant history -> RED (>=0.75)
+        [0.05, 0.08, 0.12, 0.15],  # Player A: Very clean baseline -> GREEN (<0.35)
+        [0.06, 0.09, 0.14, 0.16],  # Player B: Clean history -> GREEN (<0.35)
+        [0.65, 0.68, 0.62, 0.60],  # Player C: Suspicious history -> GRAY [0.35 - 0.75]
+        [0.92, 0.95, 0.90, 0.88],  # Player D: Blatant history -> RED (>=0.75)
     ], dtype=np.float32)
 
-    # $$$ [YOUR_LIVE_MATCH_TELEMETRY_STREAM] $$$
+    # Live telemetry streamed from active match server
     X_live_telem = np.array([
-        [0.26, 0.11, 0.22, 0.16],  # Player A: Normal -> Clean (Discarded early)
+        [0.26, 0.11, 0.21, 0.15],  # Player A: Normal -> Clean (Discarded early)
         [0.38, 0.18, 0.28, 0.22],  # Player B: Moderately anomalous -> GRAY
         [0.38, 0.18, 0.28, 0.22],  # Player C: Moderately anomalous -> GRAY
         [4.80, 5.50, 6.00, 5.90],  # Player D: Extreme speed/fly hack -> RED!
     ], dtype=np.float32)
 
-    # $$$ [YOUR_PLAYER_PROFILE_METADATA_FROM_DB] $$$
+    # User profile metadata extracted from game DB
     profiles = [
         {"player_id": "Player_A_Clean", "bio": "GG everyone, let's win!", "nickname": "Falcon"},
         {"player_id": "Player_B_Borderline", "bio": "Join our team clan discord.gg/teamalpha", "nickname": "AlphaOne"},
@@ -157,7 +156,7 @@ def main():
         stage1_rosters=s1_res["rosters"],
         stage2_rosters=s2_res["rosters"],
         stage3_rosters=s3_res["rosters"],
-        match_id="$$$ MATCH_BATTLEGROUND_ALPHA_99 $$$",
+        match_id="MATCH_BATTLEGROUND_ALPHA_99",
     )
 
     # =========================================================================

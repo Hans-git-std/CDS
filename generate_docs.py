@@ -66,7 +66,7 @@ def create_document(output_path):
         ("Framework Name:", "Cheat Detection System (CDS)"),
         ("Machine Learning Engine:", "TensorFlow 2.x (Sequential Models & Deep Autoencoders)"),
         ("Feature Philosophy:", "Feature-Agnostic (Dynamic developer-defined features + FeatureScaler)"),
-        ("Integration Syntax:", "$$$ info $$$ Markers for all studio-specific parameters"),
+        ("Integration Standard:", "Clean Modular Python API with dynamic FeatureScaler & Studio Callbacks"),
         ("Operational Pipeline:", "4-Stage Hybrid (Passive NLP + Active Anomaly + Profile Agent + Orchestrator)"),
         ("Consensus Engine:", "3-GRAY Promotion Rule (3x GRAY ===> RED) & 2-GRAY Retention"),
         ("Specification Version:", "2.2.0-PRODUCTION (October 2026)")

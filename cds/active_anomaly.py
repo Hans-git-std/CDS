@@ -68,6 +68,14 @@ class ActiveAnomalyDetector:
         if input_dim is not None:
             self.build_model(input_dim)
 
+    @property
+    def threshold_gray(self) -> Optional[float]:
+        return self.gray_error_threshold
+
+    @property
+    def threshold_red(self) -> Optional[float]:
+        return self.red_error_threshold
+
     def build_model(self, input_dim: int) -> tf.keras.Sequential:
         """
         Constructs the Deep Autoencoder:

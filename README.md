@@ -18,8 +18,8 @@
 
 1. **Features are Decided by the Developer (YOU), Not by Us:**  
    CDS is completely feature-agnostic. Whether your game tracks 4 features or 40 features, the models dynamically adapt to your input dimensions. We guide you on feature selection, but you retain full control over your telemetry.
-2. **`$$$ info $$$` Marker Convention:**  
-   Every developer-configurable section, custom feature list, and studio integration point is explicitly marked between **`$$$ info $$$`** markers (e.g. `$$$ YOUR_CHOSEN_DATABASE_FEATURES $$$`, `$$$ YOUR_LIVE_TELEMETRY_STREAM $$$`, `$$$ YOUR_BAN_CALLBACK $$$`). This makes it immediately obvious where you plug in your game data!
+2. **Modular Architecture & Clean Developer Extensibility:**  
+   Every component connects via straightforward APIs. Developers provide their own training matrices, telemetry streams, and studio callbacks (`on_green`, `on_gray`, `on_red`) without touching core detection algorithms.
 3. **Powered by TensorFlow:**  
    Uses standard `tf.keras.Sequential` architectures for supervised historical feature classification and deep Autoencoders for real-time anomaly detection.
 4. **Designed for Easy Implementation:**  
@@ -132,19 +132,17 @@ stage3 = AgenticProfileInspector()
 orchestrator = PipelineOrchestrator(stage1, stage2, stage3)
 
 # 2. Train Stage 1 with your Ground-Truth Answer Key (0=GREEN, 1=RED)
-# $$$ [YOUR_DATABASE_TRAINING_SAMPLES_AND_ANSWER_KEY] $$$
-X_db_train = np.array([$$$ [0.05, 0.10] $$$, $$$ [0.08, 0.12] $$$, $$$ [0.92, 0.95] $$$], dtype=np.float32)
-y_db_train = np.array([$$$ 0 $$$, $$$ 0 $$$, $$$ 1 $$$], dtype=np.float32)
+X_db_train = np.array([[0.05, 0.10], [0.08, 0.12], [0.92, 0.95]], dtype=np.float32)
+y_db_train = np.array([0, 0, 1], dtype=np.float32)
 stage1.train(X_db_train, y_db_train, epochs=25)
 
 # 3. Train Stage 2 Autoencoder on clean gameplay telemetry
-# $$$ [YOUR_NORMAL_CLEAN_GAMEPLAY_TELEMETRY] $$$
-X_clean_telem = np.array([$$$ [0.20, 0.15] $$$, $$$ [0.25, 0.18] $$$], dtype=np.float32)
+X_clean_telem = np.array([[0.20, 0.15], [0.25, 0.18]], dtype=np.float32)
 stage2.train_baseline(X_clean_telem, epochs=25)
 
 # 4. Run full orchestrator on active players
 final_results = orchestrator.harmonize_rosters(
-    all_player_ids=$$$ ["P101", "P102"] $$$,
+    all_player_ids=["P101", "P102"],
     stage1_rosters={"GREEN": ["P101"], "GRAY": ["P102"], "RED": []},
     stage2_rosters={"GRAY": ["P102"], "RED": []},
     stage3_rosters={"GREEN": ["P101"], "GRAY": ["P102"]},
